@@ -29,9 +29,9 @@
         button.btn-opcion { min-width: 65px; padding: 2px 10px; font-size: 20px; font-weight: 500; border: 1px solid #ced4da; border-radius: 6px; background: white; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         button.btn-opcion.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 2px 4px rgba(13,110,253,0.3); }
         
-        .franja-lector { margin-bottom: 10px; background: #e7f1ff; padding: 7px; border-radius: 6px; border: 1px solid #b6d4fe; }
+        .franja-lector { font-size: 15px; margin-bottom: 10px; background: #e7f1ff; padding: 7px; border-radius: 6px; border: 1px solid #b6d4fe; }
         .franja-lector label { display: block; font-weight: bold; margin-bottom: 6px; color: #084298; }
-        .input-qr { width: 100%; padding: 5px; font-size: 20px; border: 2px solid #86b7fe; border-radius: 6px; box-sizing: border-box; }
+        .input-qr { width: 100%; padding: 5px; font-size: 15px; border: 2px solid #86b7fe; border-radius: 6px; box-sizing: border-box; }
         
         /* Contenedor responsivo para que la tabla no rompa el diseño en celular */
         .tabla-contenedor { overflow-x: auto; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 10px; }
@@ -109,8 +109,8 @@
 
     <!-- TABLA DE HISTORIAL RESPONSIVA -->
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-  <div style="display: flex; align-items: center; gap: 15px;">
-    <h3 style="margin: 0; font-family: sans-serif;">Registros de la sesión</h3>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <h3 style="margin: 0; font-family: sans-serif;">Registros del día</h3>
     <!-- NUESTRO BOTÓN INTERRUPTOR INTERACTIVO -->
     <button id="btn-cambiar-modo" onclick="conmutarModoVista()" style="background-color: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: background 0.2s;">
       📊 Ver SubTotales
@@ -571,62 +571,102 @@ function actualizarTablaVista() {
 
   // MODO 2: SUBTOTALES POR SKU (Columna descripción eliminada)
   // MODO 2: SUBTOTALES POR SKU - VERSIÓN LIMPIA, ULTRA-SEGURA Y EN SEGUNDOS INDUSTRIALES
-  } else if (modoVistaActual === "subtotales") {
-    // Definimos el encabezado limpio de 4 columnas que calza perfecto en celulares
+} else if (modoVistaActual === "subtotales") {
+    // 1. Encabezados unificados en BLANCO sobre fondo oscuro
     thead.innerHTML = `
-      <tr>
-        <th>SKU Producto</th>
-        <th style="text-align: center;">Cantidad Válida</th>
-        <th style="text-align: center;">Cantidad Anulada</th>
-        <th style="text-align: center;">Total Escaneado</th>
-      </tr>
-    `;
+        <tr>
+            <th>Producto</th>
+            <th style="text-align: center;">Válidos</th>
+            <th style="text-align: center;">Anulados</th>
+            <th style="text-align: center;">Total</th>
+            <th style="text-align: center; color: #ffffff;">Mediana</th>
+            <th style="text-align: center; color: #ffffff;">Dispersión</th>
+        </tr>`;
 
     tbody.innerHTML = "";
 
-    // Objeto contenedor para la suma de la sesión
-    const agrupadoSKU = {};
+    // 2. Ordenar cronológicamente todo el historial (incluye anulados)
+    const regCronologicos = [...historialLecturas].sort((a, b) => a.id - b.id);
 
-    // Agrupamos el historial de forma directa y nativa
-    historialLecturas.forEach(reg => {
-      // Nos aseguramos de limpiar espacios para evitar duplicados visuales
-      const skuClave = reg.sku ? String(reg.sku).trim() : "ERROR";
+    // Mapeo para guardar diferencias de segundos por cada SKU
+    const tiemposPorSKU = {};
+    const LIMITE_MAX_SEGUNDOS = 20 * 60; // 20 minutos corte pausas largas
 
-      if (!agrupadoSKU[skuClave]) {
-        agrupadoSKU[skuClave] = {
-          sku: skuClave,
-          validos: 0,
-          anulados: 0
-        };
-      }
-      
-      // Clasificación directa basada en tu bandera de anulación en pantalla
-      if (reg.esAnulado) {
-        agrupadoSKU[skuClave].anulados++;
-      } else {
-        agrupadoSKU[skuClave].validos++;
-      }
-    });
-
-    // Dibujamos las filas con los mismos estilos y colores aprobados
-    Object.values(agrupadoSKU).forEach(item => {
-      const fila = document.createElement('tr');
-      const totalPorSKU = item.validos + item.anulados;
-
-      fila.innerHTML = `
-        <td><strong style="color: #1e3a8a; letter-spacing: 0.5px; font-size: 1.1rem;">${item.sku}</strong></td>
-        <td style="text-align: center; color: #16a34a; font-weight: bold; font-size: 1.1rem;">${item.validos} u.</td>
-        <td style="text-align: center; color: ${item.anulados > 0 ? '#dc2626' : '#9ca3af'}; font-weight: ${item.anulados > 0 ? 'bold' : 'normal'}; font-style: ${item.anulados > 0 ? 'normal' : 'italic'};">${item.anulados} u.</td>
-        <td style="text-align: center; font-weight: bold; background-color: #f3f4f6;">${totalPorSKU} u.</td>
-      `;
-      tbody.appendChild(fila);
-    });
-    
-    // Alerta visual si la tabla se encuentra vacía
-    if (Object.keys(agrupadoSKU).length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#9ca3af;">No hay datos capturados en esta sesión para resumir.</td></tr>`;
+    for (let i = 1; i < regCronologicos.length; i++) {
+        const diffSegundos = (regCronologicos[i].id - regCronologicos[i-1].id) / 1000;
+        
+        if (diffSegundos <= LIMITE_MAX_SEGUNDOS) {
+            const skuActual = regCronologicos[i].sku ? String(regCronologicos[i].sku).trim() : "ERROR";
+            if (!tiemposPorSKU[skuActual]) tiemposPorSKU[skuActual] = [];
+            tiemposPorSKU[skuActual].push(diffSegundos);
+        }
     }
-  }
+
+    // 3. Agrupación tradicional para conteos de cantidades
+    const agrupadoSKU = {};
+    historialLecturas.forEach(reg => {
+        const skuClave = reg.sku ? String(reg.sku).trim() : "ERROR";
+        if (!agrupadoSKU[skuClave]) {
+            agrupadoSKU[skuClave] = { sku: skuClave, validos: 0, anulados: 0 };
+        }
+        if (reg.esAnulado) {
+            agrupadoSKU[skuClave].anulados++;
+        } else {
+            agrupadoSKU[skuClave].validos++;
+        }
+    });
+
+    // Función interna para obtener percentiles exactos (método de interpolación lineal)
+    const obtenerPercentil = (arr, p) => {
+        if (arr.length === 0) return 0;
+        const index = (p / 100) * (arr.length - 1);
+        const low = Math.floor(index);
+        const high = Math.ceil(index);
+        return arr[low] + (arr[high] - arr[low]) * (index - low);
+    };
+
+    // 4. Renderizar las filas aplicando percentiles robustos
+    Object.values(agrupadoSKU).forEach(item => {
+        const fila = document.createElement('tr');
+        const totalPorSKU = item.validos + item.anulados;
+        
+        const tiempos = tiemposPorSKU[item.sku] || [];
+        tiempos.sort((a, b) => a - b); // Ordenar de menor a mayor esencial para percentiles
+
+        let textoMediana = "-";
+        let textoDispersion = "-";
+
+        if (tiempos.length > 0) {
+            // Mediana exacta mediante percentil 50
+            const mediana = obtenerPercentil(tiempos, 50);
+            textoMediana = `${Math.round(mediana)} s`;
+
+            if (tiempos.length > 1) {
+                // Cálculo de dispersión basado en Cuartiles (P25 y P75)
+                const p25 = obtenerPercentil(tiempos, 25);
+                const p75 = obtenerPercentil(tiempos, 75);
+                
+                // El semi-rango intercuartílico nos da el radio de dispersión típico estable
+                const dispersionCuartil = (p75 - p25) / 2;
+                textoDispersion = `±${Math.round(dispersionCuartil)} s`;
+            }
+        }
+
+        fila.innerHTML = `
+            <td><strong style="color: #1f2937; letter-spacing: 0.5px; font-size: 1.1rem;">${item.sku}</strong></td>
+            <td style="text-align: center; color: #16a34a; font-weight: bold; font-size: 1.1rem;">${item.validos} u.</td>
+            <td style="text-align: center; color: ${item.anulados > 0 ? '#dc2626' : '#9ca3af'}; font-weight: ${item.anulados > 0 ? 'bold' : 'normal'};">${item.anulados} u.</td>
+            <td style="text-align: center; font-weight: bold; background-color: #f3f4f6;">${totalPorSKU} u.</td>
+            <td style="text-align: center; font-weight: bold; color: #1f2937; font-size: 1.1rem;">${textoMediana}</td>
+            <td style="text-align: center; color: #1f2937; font-size: 1.1rem;">${textoDispersion}</td>
+        `;
+        tbody.appendChild(fila);
+    });
+
+    if (Object.keys(agrupadoSKU).length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#9ca3af;">No hay datos capturados en esta sesión para resumir.</td></tr>';
+    }
+}
 
   
 }
