@@ -181,7 +181,8 @@ let modoVistaActual = "listado";
 // Función que cambia el modo al presionar el botón
 function conmutarModoVista() {
   const boton = document.getElementById('btn-cambiar-modo');
-  
+  const tabla = document.getElementById('tabla-registros'); // Identifica tu tabla activa
+
   if (modoVistaActual === "listado") {
     modoVistaActual = "subtotales";
     boton.innerText = "📋 Ver Listado";
