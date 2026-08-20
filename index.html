@@ -186,10 +186,16 @@ function conmutarModoVista() {
     modoVistaActual = "subtotales";
     boton.innerText = "📋 Ver Listado";
     boton.style.backgroundColor = "#4b5563"; // Gris para indicar el cambio
+	// AGREGA ESTA LÍNEA: Activa el encogimiento automático
+    if (tabla) tabla.classList.add("modo-subtotales");
+	  
   } else {
     modoVistaActual = "listado";
     boton.innerText = "📊 Ver SubTotales";
     boton.style.backgroundColor = "#2563eb"; // Azul clásico
+	// AGREGA ESTA LÍNEA: Restaura el ancho normal del listado
+    if (tabla) tabla.classList.remove("modo-subtotales");
+  
   }
   
   // Redibujamos la tabla instantáneamente con el nuevo modo aplicado
