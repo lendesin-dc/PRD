@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Bodega S</title>
+    <title>Revisión de Productos</title>
     <style>
         /* Ajustes de diseño adaptables (Mobile-First) */
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 5px; background-color: #f0f2f5; }
@@ -47,41 +47,46 @@
         .panel-inferior { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #eee; }
         .btn-limpiar { background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; }
         .btn-limpiar:hover { background: #5c636a; }
+
+        /* Remueve las restricciones de ancho forzado únicamente en la vista de subtotales */
+        table.modo-subtotales {
+            width: 100% !important;
+            min-width: 0px !important;
+        }
+
+        /* Evita que los textos cortos dentro de las celdas se rompan en dos renglones */
+        table.modo-subtotales th,
+        table.modo-subtotales td {
+            white-space: nowrap;
+        }
+
+		
     </style>
 </head>
 <body>
 
 <div class="contenedor">
-    <h2>Registro de Bodega S</h2>
+    <h2>Revisión de Productos</h2>
 
     <!-- FILAS DE BOTONES ADAPTABLES -->
     <div class="franja-botones">
         <div class="fila-botones">
             <label>Origen :</label>
             <div class="grupo">
-                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'origen')">C-328</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">D-05</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-X</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">D-02</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">D-01</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-07</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">LIN</button>
+                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'origen')">I-J</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">Muestra</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-01</button>
 		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-02</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">C-332</button>
-                
+		        
             </div>
         </div>
         <div class="fila-botones">
             <label>Estado Orig.:</label>
             <div class="grupo">
-                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'estOrigen')"> E </button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">B</button>
+                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'estOrigen')"> Compra </button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Bodega</button>
                 <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> U </button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> A </button>         
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> DD </button>         
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> I </button>         
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> R </button>         
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> S </button>         
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> A </button>              
                 
             </div>
         </div>
@@ -89,7 +94,7 @@
             <label>Destino :</label>
             <div class="grupo">
                 <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'destino')">B-01</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">B-07</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">B-S</button>
                 <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">C-770</button>
             </div>
         </div>
@@ -153,12 +158,12 @@
 <!-- Reemplaza desde aquí hasta el final de tu archivo -->
 <script>
 // 1. CONFIGURACIÓN COMPLETA DE TU ENTORNO REMOTO DE GOOGLE
-const URL_GOOGLE_APP = "https://script.google.com/macros/s/AKfycbxWVZSy0O18Lv8WcIYVmv1toTJTDGxdBs7e3boFpWxa-EmY29sXxOx3jhTKfY2fA9E4VQ/exec"; 
+const URL_GOOGLE_APP = "https://script.google.com/macros/s/AKfycby6zIMh5s7yVDnH5SCk_KDL3YLTBqjpct0ej9xG_2XYmTWTyneq1KIVWZCX3MlAqgs0mw/exec"; 
 const MINUTOS_RESTRICCION_DUPLICADO = 5;
 
 let configuracionActual = {
-    origen: 'C-328',
-    estOrigen: 'E',
+    origen: 'I-J',
+    estOrigen: 'Compra',
     destino: 'B-01'
 };
 let historialLecturas = JSON.parse(localStorage.getItem('historial_bodega')) || [];
