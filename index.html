@@ -29,7 +29,7 @@
         button.btn-opcion { min-width: 65px; padding: 2px 10px; font-size: 20px; font-weight: 500; border: 1px solid #ced4da; border-radius: 6px; background: white; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         button.btn-opcion.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 2px 4px rgba(13,110,253,0.3); }
         
-        .franja-lector { font-size: 25px; margin-bottom: 10px; background: #e7f1ff; padding: 7px; border-radius: 6px; border: 1px solid #b6d4fe; }
+        .franja-lector { font-size: 22px; margin-bottom: 10px; background: #e7f1ff; padding: 7px; border-radius: 6px; border: 1px solid #b6d4fe; }
         .franja-lector label { display: block; font-weight: bold; margin-bottom: 6px; color: #084298; }
         .input-qr { width: 100%; padding: 5px; font-size: 15px; border: 2px solid #86b7fe; border-radius: 6px; box-sizing: border-box; }
         
@@ -74,19 +74,19 @@
             <label>Origen :</label>
             <div class="grupo">
                 <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'origen')">I-J</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">Muestra</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-01</button>
-		        <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">B-02</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">CD</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'origen')">DEV</button>
 		        
             </div>
         </div>
         <div class="fila-botones">
             <label>Estado Orig.:</label>
             <div class="grupo">
-                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'estOrigen')"> Compra </button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Bodega</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> U </button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')"> A </button>              
+                <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'estOrigen')">Revisar</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Nvo.QR</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Reparar</button>
+				<button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Limpiar</button>
+				<button class="btn-opcion" onclick="cambiarSeleccion(this, 'estOrigen')">Reg.GN</button>              
                 
             </div>
         </div>
@@ -94,7 +94,7 @@
             <label>Destino :</label>
             <div class="grupo">
                 <button class="btn-opcion activo" onclick="cambiarSeleccion(this, 'destino')">B-01</button>
-                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">B-S</button>
+                <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">B-02</button>
                 <button class="btn-opcion" onclick="cambiarSeleccion(this, 'destino')">C-770</button>
             </div>
         </div>
@@ -163,7 +163,7 @@ const MINUTOS_RESTRICCION_DUPLICADO = 5;
 
 let configuracionActual = {
     origen: 'I-J',
-    estOrigen: 'Compra',
+    estOrigen: 'Revisar',
     destino: 'B-01'
 };
 let historialLecturas = JSON.parse(localStorage.getItem('historial_bodega')) || [];
