@@ -17,7 +17,7 @@
     body { 
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
       margin: 0; 
-      padding: 8px; 
+      padding: 6px; 
       background-color: var(--bg-panel); 
       -webkit-user-select: none;
       user-select: none;
@@ -28,55 +28,53 @@
       max-width: 950px; 
       margin: 0 auto; 
       background: white; 
-      padding: 12px; 
+      padding: 10px; 
       border-radius: 8px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06); 
       box-sizing: border-box;
     }
 
-    h2 { text-align: center; margin-top: 5px; margin-bottom: 15px; font-size: 1.3rem; color: #1a1a1a; }
+    h2 { text-align: center; margin-top: 5px; margin-bottom: 12px; font-size: 1.25rem; color: #1e293b; font-weight: 800; }
     
-    /* 📊 FRANJA SUPERIOR: MATRIZ DE PARETO 2 FILAS X 3 COLUMNAS (SIN LABELS) */
+    /* 📊 FRANJA SUPERIOR: MATRIZ DE PARETO DE ALTO DISEÑO */
     .franja-botones { 
-      background: #f8f9fa; 
-      padding: 10px; 
+      background: #f8fafc; 
+      padding: 8px; 
       border-radius: 8px; 
       border: 1px solid #e2e8f0;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       box-sizing: border-box;
     }
 
     .pareto-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales en la pantalla */
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
       width: 100%;
       box-sizing: border-box;
     }
 
-    /* Botones ergonómicos verticales masivos */
     button.btn-opcion { 
       width: 100%;
-      padding: 12px 4px; 
-      font-size: 15px; 
+      padding: 10px 2px; 
+      font-size: 14px; 
       font-weight: bold; 
       border: 2px solid #cbd5e1; 
       border-radius: 8px; 
       background: white; 
       cursor: pointer; 
       display: flex;
-      flex-direction: column; /* Icono arriba, texto abajo */
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      -webkit-tap-highlight-color: transparent; 
+      gap: 4px;
       transition: all 0.15s ease;
       box-sizing: border-box;
-      color: #334155;
+      color: #475569;
     }
 
     button.btn-opcion span.icono {
-      font-size: 1.6rem; /* Icono grande en primera línea */
+      font-size: 1.5rem;
       line-height: 1;
     }
     
@@ -84,47 +82,47 @@
       background: var(--success) !important; 
       color: white !important; 
       border-color: #bbf7d0 !important; 
-      box-shadow: 0 0 10px rgba(22,163,74,0.4); 
+      box-shadow: 0 4px 10px rgba(22,163,74,0.35); 
     }
 
     button.btn-opcion.pareto-active { 
       background: var(--warning) !important; 
       color: white !important; 
       border-color: #fdba74 !important; 
-      box-shadow: 0 0 12px rgba(234,88,12,0.5); 
+      box-shadow: 0 4px 12px rgba(234,88,12,0.4); 
     }
 
-    /* ⌨️ FRANJA LECTOR INFERIOR AJUSTADA POR PORCENTAJES ESTRICTOS (40% / 30% / 30%) */
+    /* ⌨️ FRANJA LECTOR INFERIOR POR PORCENTAJES ESTRICTOS (40% / 30% / 30%) */
     .franja-lector { 
       background: #e7f1ff; 
-      padding: 10px; 
+      padding: 8px; 
       border-radius: 8px; 
       border: 1px solid #b6d4fe; 
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
       width: 100%;
       box-sizing: border-box;
+      margin-bottom: 12px;
     }
 
     .franja-lector button,
     .franja-lector input {
       transition: width 0.25s ease-in-out, background-color 0.2s ease;
-      box-sizing: border-box; /* Evita que los bordes sumen ancho y desborden */
-      height: 46px; /* Altura uniforme para control táctil perfecto */
+      box-sizing: border-box;
+      height: 44px;
     }
 
-    /* ESTADOS INICIALES EN REPOSO DE LA PANTALLA */
     .btn-operacion.btn-azul-camara {
-      width: 40%; /* 📷 Escanear toma el 40% inicial */
+      width: 40%;
       background-color: var(--primary);
       color: white;
     }
 
     .input-qr { 
-      width: 30%; /* Lector toma el 30% inicial central */
-      padding: 10px; 
-      font-size: 15px; 
+      width: 30%;
+      padding: 8px; 
+      font-size: 14px; 
       font-weight: bold;
       border: 2px solid #86b7fe; 
       border-radius: 6px; 
@@ -133,7 +131,7 @@
     }
 
     .btn-operacion.btn-naranja-pausa {
-      width: 30%; /* ⏸️ Pausa toma el 30% inicial derecho */
+      width: 30%;
       background-color: var(--warning);
       color: white;
     }
@@ -148,69 +146,119 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
     }
 
-    /* 🔄 LAS MUTACIONES DE TU DISEÑO AL PRESIONAR DIGITAR */
-    /* La barra de texto se estira hacia la izquierda ocupando el 75% */
-    .input-qr.modo-input-maximo {
-      width: 75% !important;
-      border-color: var(--primary);
+    /* MUTACIONES AL DIGITAR */
+    .input-qr.modo-input-maximo { width: 75% !important; border-color: var(--primary); }
+    .btn-operacion.modo-enter-azul { background-color: var(--primary) !important; width: 25% !important; color: white !important; }
+
+    /* 📋 SECCIÓN DE HISTORIAL INDUSTRIAL TOTALMENTE AJUSTADA ANTI-DESBORDE */
+    .panel-tabla {
+      margin-top: 5px;
+      box-sizing: border-box;
+      width: 100%;
     }
 
-    /* El botón derecho pasa a ser ENTER ocupando el 25% en el lugar de la pausa */
-    .btn-operacion.modo-enter-azul {
-      background-color: var(--primary) !important;
-      width: 25% !important;
-      color: white !important;
+    .fila-controles-tabla {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
-    /* 🚨 MODAL GIGANTE DE COHESIÓN VISUAL */
+    .btn-tabla {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    .tabla-prd {
+      width: 100%;
+      border-collapse: collapse;
+      box-sizing: border-box;
+      table-layout: fixed; /* Fuerza el respeto estricto de los anchos asignados */
+    }
+
+    /* Títulos en doble línea compactos mediante flex centrado */
+    .tabla-prd th {
+      background-color: #1e293b;
+      color: #f1f5f9;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 6px 4px;
+      border: 1px solid #334155;
+      vertical-align: middle;
+      height: 34px;
+    }
+
+    .tabla-prd td {
+      padding: 8px 4px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.8rem;
+      vertical-align: middle;
+      text-align: center;
+      /* ARREGLO ANTI-DESBORDE: Quiebra cadenas largas como el QR sin romper la celda */
+      word-break: break-all; 
+      overflow: hidden;
+    }
+
+    .row-reparar { background-color: #fff7ed; }
+    .row-pausa { background-color: #f0fdf4; }
+
+    /* BADGES DE ESTADOS EN PLANILLA */
+    .badge-sincro {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    .badge-sincro.ok { background-color: #dcfce7; color: #15803d; }
+    .badge-sincro.espera { background-color: #fef08a; color: #854d0e; animation: parpadeo 1.5s infinite; }
+
+    @keyframes parpadeo { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+    /* MODAL GIGANTE */
     .modal-exito {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(16,185,129,0.96); z-index: 10000;
       align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center;
     }
-    .modal-exito .sku-contenedor-naranja {
-      background: rgba(234, 88, 12, 0.9) !important;
-      border: 2px solid #fdba74;
-    }
-
-    /* CAPA DE BLOQUEO POR TIEMPO MUERTO */
-    .capa-pausa {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(234, 88, 12, 0.97); z-index: 9999;
-      align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center;
-    }
+    .modal-exito .sku-contenedor-naranja { background: rgba(234, 88, 12, 0.9) !important; border: 2px solid #fdba74; }
+    .capa-pausa { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(234, 88, 12, 0.97); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center; }
   </style>
 </head>
 <body>
 
   <!-- MODAL GIGANTE DE NOTIFICACIÓN DE LECTURA -->
   <div id="modal-exito" class="modal-exito">
-    <div style="font-size: 5rem; margin-bottom: 5px;">✅</div>
-    <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 15px;">LECTURA REGISTRADA</div>
-    <div id="sku-contenedor" style="background: rgba(0,0,0,0.2); padding: 12px 35px; border-radius: 8px; min-width: 260px;">
-      <div style="font-size: 1rem; opacity: 0.85; margin-bottom: 4px;">ESTADO ASIGNADO:</div>
-      <div id="modal-sku" style="font-size: 2.2rem; font-weight: 900; word-break: break-all;">-</div>
+    <div style="font-size: 4rem; margin-bottom: 5px;">✅</div>
+    <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 12px;">LECTURA REGISTRADA</div>
+    <div id="sku-contenedor" style="background: rgba(0,0,0,0.2); padding: 10px 30px; border-radius: 8px; min-width: 240px;">
+      <div style="font-size: 0.9rem; opacity: 0.85; margin-bottom: 4px;">ESTADO ASIGNADO:</div>
+      <div id="modal-sku" style="font-size: 2rem; font-weight: 900; word-break: break-all;">-</div>
     </div>
   </div>
 
   <!-- CAPA DE PAUSA DE LÍNEA -->
   <div id="capa-pausa" class="capa-pausa">
-    <div style="font-size: 6rem; margin-bottom: 10px;">⏸️</div>
-    <div style="font-size: 2.5rem; font-weight: 900;">LÍNEA PAUSADA</div>
-    <div style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">Tiempos muertos activos en la sesión.</div>
-    <button onclick="gestionarBotonDinamico()" style="background: white; color: var(--warning); border: none; padding: 14px 40px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+    <div style="font-size: 5rem; margin-bottom: 10px;">⏸️</div>
+    <div style="font-size: 2.2rem; font-weight: 900;">LÍNEA PAUSADA</div>
+    <div style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 25px;">Tiempos muertos activos en la sesión.</div>
+    <button onclick="gestionarBotonDinamico()" style="background: white; color: var(--warning); border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
       ▶️ REANUDAR OPERACIÓN
     </button>
   </div>
 
-  <!-- INTERFAZ PRINCIPAL PANEL PRD -->
   <div class="contenedor">
     <h2>Registro de Bodega S</h2>
     
-    <!-- 📊 REJILLA DE CORTE SUPERIOR (2 FILAS X 3 COLUMNAS) -->
     <div class="franja-botones">
       <div class="pareto-grid">
         <button id="btn-ok-base" class="btn-opcion ok-active" onclick="fijarEstadoCalidad('OK', this)"><span class="icono">🟢</span>OK</button>
@@ -222,39 +270,59 @@
       </div>
     </div>
 
-    <!-- ⌨️ FILA DE CONTROL DE INGRESO (40% / 30% / 30% INICIAL) -->
     <div class="franja-lector">
-      <!-- 40% ANCHO CONSTANTE INICIAL -->
       <button id="btn-camara-toggle" class="btn-operacion btn-azul-camara" onclick="simularToggleCamara()">
         📷 Escanear
       </button>
-
-      <!-- 30% ANCHO CONSTANTE INICIAL -->
-      <input type="text" id="lector-simulado" class="input-qr" placeholder="Digite aquí o use la pistola..." onfocus="activarModoDigitacion()" onkeypress="evaluarTeclado(event)">
-      
-      <!-- 30% ANCHO CONSTANTE INICIAL -->
+      <input type="text" id="lector-simulado" class="input-qr" placeholder="Digite aquí..." onfocus="activarModoDigitacion()" onkeypress="evaluarTeclado(event)">
       <button id="btn-pausa-dinamico" class="btn-operacion btn-naranja-pausa" onclick="gestionarBotonDinamico()">
         ⏸️ Pausa
       </button>
     </div>
+
+    <!-- PANEL DE HISTORIAL CON FORMATO AJUSTADO -->
+    <div class="panel-tabla">
+      <div class="fila-controles-tabla">
+        <button id="btn-modo-vista" onclick="conmutarModoVista()" style="background-color: var(--primary);" class="btn-tabla">📊 Ver SubTotales</button>
+        <button onclick="limpiarHistorialVista()" style="background-color: var(--gray-btn);" class="btn-tabla">Limpiar Vista</button>
+      </div>
+      
+      <table class="tabla-prd">
+        <thead id="tabla-encabezado">
+          <!-- Se inyecta dinámicamente -->
+        </thead>
+        <tbody id="tabla-cuerpo">
+          <!-- Se inyectan filas -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
 
-    <script>
-    // URL de tu Google Apps Script publicada para el proyecto PRD
-    const URL_GOOGLE_APP = "TU_URL_DE_GOOGLE_APPS_SCRIPT";
+  <script>
+    // URL real de tu Google Apps Script (Web App) publicada
+    const URL_GOOGLE_APP = "https://script.google.com/macros/s/AKfycby6zIMh5s7yVDnH5SCk_KDL3YLTBqjpct0ej9xG_2XYmTWTyneq1KIVWZCX3MlAqgs0mw/exec";
 
-    // --- VARIABLES DE CONTROL DE ESTADOS ---
+    // --- VARIABLES DE CONTROL DE INTERFAZ ---
     let seleccionCalidadActiva = "OK"; 
     let enModoDigitacion = false;
     let lineaEnPausa = false;
     let camaraActivaHardware = false;
+    let modoVistaActual = "listado"; // "listado" o "subtotales"
 
-    // --- ARQUITECTURA DE TIEMPOS MUERTOS Y PROCESOS ---
-    let timestampUltimoHito = Date.now(); // Hito inicial de tiempo
-    let historialLecturas = [];           // Búfer local de la sesión
+    // --- MOTOR DE TIEMPOS Y COLA DE MEMORIA ---
+    let timestampUltimoHito = Date.now(); 
+    let historialLecturas = [];           // Array global indexable
 
-    // --- 📊 LÓGICA DE BOTONERA SUPERIOR (PARETO 2X3) ---
+    // Al cargar el documento, dibuja el encabezado inicial del listado
+    document.addEventListener("DOMContentLoaded", () => {
+      actualizarTablaVista();
+      
+      // DISPARADOR EN SEGUNDO PLANO: Reintenta envíos pendientes cada 10 segundos de forma automática
+      setInterval(procesarColaPendientesNube, 10000);
+    });
+
+    // --- 📊 CONTROL DE LA BOTONERA SUPERIOR ---
     function fijarEstadoCalidad(codigo, boton) {
       document.querySelectorAll('.btn-opcion').forEach(b => {
         b.classList.remove('ok-active', 'pareto-active');
@@ -267,40 +335,30 @@
       } else {
         boton.classList.add('pareto-active');
       }
-      console.log("Estado de calidad fijado para el próximo registro:", seleccionCalidadActiva);
     }
 
-    // --- ⌨️ LÓGICA DE MUTACIÓN INFERIOR (COMPORTAMIENTO PORCENTAJES) ---
+    // --- ⌨️ COMPORTAMIENTO DINÁMICO POR PORCENTAJES (75% / 25%) ---
     function activarModoDigitacion() {
       if (enModoDigitacion) return;
       enModoDigitacion = true;
       
-      // 1. Escondemos el botón de escanear de la izquierda por completo
       document.getElementById('btn-camara-toggle').style.display = "none";
-      
-      // 2. Aplicamos la regla del 75% a la barra de texto estirándola
       document.getElementById('lector-simulado').classList.add('modo-input-maximo');
       
-      // 3. Mutamos el botón de la pausa a Azul ENTER fijándolo al 25% exacto de la pantalla
       const btnDerecho = document.getElementById('btn-pausa-dinamico');
       if (btnDerecho) {
         btnDerecho.innerText = "➡️ ENTER";
         btnDerecho.classList.remove('btn-naranja-pausa');
         btnDerecho.classList.add('modo-enter-azul');
       }
-      console.log("Modo manual activo: Proporción 75% Entrada / 25% ENTER dispuesto.");
     }
 
     function restaurarBotoneraInferior() {
       enModoDigitacion = false;
       
-      // 1. Reaparece el botón de la cámara con su 40% original a la izquierda
       document.getElementById('btn-camara-toggle').style.display = "flex";
-      
-      // 2. Encogemos la barra de texto regresándola a su 30% central
       document.getElementById('lector-simulado').classList.remove('modo-input-maximo');
       
-      // 3. Regresamos el botón derecho a su estado naranja original de Pausa (30%)
       const btnDerecho = document.getElementById('btn-pausa-dinamico');
       if (btnDerecho) {
         btnDerecho.innerText = lineaEnPausa ? "▶️ Reanudar" : "⏸️ Pausa";
@@ -311,95 +369,84 @@
       
       const input = document.getElementById('lector-simulado');
       input.value = "";
-      input.blur(); // Cierra el teclado virtual del celular
+      input.blur(); // Contrae el teclado del móvil
     }
 
-    // --- 🎛️ CONTROL CENTRAL DE EJECUCIÓN (BOTÓN MUTANTE DERECHO) ---
     function gestionarBotonDinamico() {
       if (enModoDigitacion) {
-        // Si la barra está expandida, actúa estrictamente como el ENTER ejecutor
         evaluarTeclado({ key: 'Enter' });
       } else {
-        // Si está en reposo, actúa como el interruptor de PAUSA de línea
         alternarPausaLinea();
       }
     }
 
-    // --- ⏸️ LÓGICA DE TIEMPOS MUERTOS (UNIFICADO COMO REGISTRO SKU) ---
+    // --- ⏸️ CONTROL UNIFICADO DE PAUSAS COMO REGISTRO SKU ---
     function alternarPausaLinea() {
       const btn = document.getElementById('btn-pausa-dinamico');
       const capaPausa = document.getElementById('capa-pausa');
       const ahora = Date.now();
       
       if (!lineaEnPausa) {
-        // INICIO DE LA PAUSA (ABRIR HITO)
         lineaEnPausa = true;
-        if (btn) {
-          btn.innerText = "▶️ Reanudar";
-          btn.style.backgroundColor = "var(--success)"; // Cambia a verde
-        }
+        if (btn) btn.innerText = "▶️ Reanudar";
         if (capaPausa) capaPausa.style.display = "flex";
 
         const registroPausa = {
           id: ahora,
-          fechaHora: new Date().toLocaleString(),
-          qrSerial: "PAUSA_LINEA_ACTIVE",
+          fechaHora: new Date().toLocaleTimeString(),
+          qrSerial: "SISTEMA_PAUSA#TOTAL",
           sku: "PAUSA",
           serie: "NO APRECIABLE",
           ocEstado: "TIEMPO_MUERTO",
-          estadoBoton: "PAUSA",
+          shadowBoton: "PAUSA",
           tiempoPropio: 0,
-          sincronizado: false
+          sincronizado: false,
+          reintentando: false
         };
 
         historialLecturas.unshift(registroPausa);
+        actualizarTablaVista();
         enviarAGoogleSheets(registroPausa);
 
       } else {
-        // FIN DE LA PAUSA (REANUDAR Y CERRAR CALCULO)
         lineaEnPausa = false;
-        if (btn) {
-          btn.innerText = "⏸️ Pausa";
-          btn.style.backgroundColor = "var(--warning)";
-        }
+        if (btn) btn.innerText = "⏸️ Pausa";
         if (capaPausa) capaPausa.style.display = "none";
 
+        // Consolidamos la pausa actual midiendo la diferencia exacta en segundos
         const ultimaPausa = historialLecturas.find(r => r.sku === "PAUSA" && r.tiempoPropio === 0);
         if (ultimaPausa) {
-          const segundosTranscurridos = Math.round((ahora - ultimaPausa.id) / 1000);
-          ultimaPausa.tiempoPropio = segundosTranscurridos; 
-          
+          ultimaPausa.tiempoPropio = Math.round((ahora - ultimaPausa.id) / 1000);
+          ultimaPausa.sincronizado = false; // Forzamos actualización de duración en la nube
           enviarAGoogleSheets(ultimaPausa);
         }
 
-        // REGLA OPERATIVA DE TU RELATO: El siguiente producto descuenta la pausa de su ciclo
+        // Marcamos el hito limpio: el próximo producto descuenta la pausa
         timestampUltimoHito = Date.now();
+        actualizarTablaVista();
       }
     }
 
-    // --- 📥 PROCESADOR DE ENTRADA CENTRAL DE PRODUCTOS ---
+    // --- 📥 PROCESADOR DE ENTRADA CENTRAL DE TEXTO ---
     function evaluarTeclado(e) {
       if (e.key !== 'Enter') return;
       
       const input = document.getElementById('lector-simulado');
       const valor = input.value.trim();
       
-      // REGLA DE PERSISTENCIA: Si presiona enter vacío, cierra barra pero CONSERVA el Pareto de arriba
       if (!valor) {
-        console.log("Enter vacío. Contrayendo controles inferiores sin alterar botones de Pareto.");
         restaurarBotoneraInferior();
         return;
       }
 
       const ahora = Date.now();
       
-      // Filtro que descarta lapsos mayores a 20 minutos (1200 segundos) del acumulado
+      // Filtro estricto que descarta lapsos excesivos mayores a 20 minutos (1200 segundos)
       let segundosCiclo = Math.round((ahora - timestampUltimoHito) / 1000);
       if (segundosCiclo > 1200 || segundosCiclo < 0) {
         segundosCiclo = 0; 
       }
 
-      // Desglose nativo completo exigido por tu back office
       let skuExtraido = "ERROR-SKU";
       let serieExtraida = "NO APRECIABLE";
       let ocExtraida = "SIN_OC";
@@ -418,60 +465,197 @@
 
       const nuevoRegistro = {
         id: ahora,
-        fechaHora: new Date().toLocaleString(),
+        fechaHora: new Date().toLocaleTimeString(),
         qrSerial: qrCompleto,
         sku: skuExtraido,
-        // Si tiene defecto asignado, forzamos serie a No Apreciable según tu Pareto
         serie: esDefecto ? "NO APRECIABLE" : serieExtraida,
         ocEstado: ocExtraida,
-        shadowBoton: seleccionCalidadActiva, // Tu campo de estado
+        shadowBoton: seleccionCalidadActiva,
         tiempoPropio: segundosCiclo,
-        sincronizado: false
+        sincronizado: false,
+        reintentando: false
       };
 
-      // Lanzamos la alerta visual gigante
       dispararCartelExito(skuExtraido + (esDefecto ? ` (${seleccionCalidadActiva})` : ""), esDefecto);
-
       historialLecturas.unshift(nuevoRegistro);
       
-      // Movemos el marcador para el próximo artículo continuo
       timestampUltimoHito = Date.now();
       
+      actualizarTablaVista();
       enviarAGoogleSheets(nuevoRegistro);
       input.value = "";
     }
 
-    // --- 🔒 TRANSMISIÓN CON MODO CORS DIRECTO AL GOOGLE SHEETS ---
-    function enviarAGoogleSheets(objetoRegistro) {
-      if (!navigator.onLine) {
-        objetoRegistro.sincronizado = false;
-        return;
+    // --- 🟢 CONMUTADOR INTERRUPTOR DE REPORTE ---
+    function conmutarModoVista() {
+      const btn = document.getElementById('btn-modo-vista');
+      if (modoVistaActual === "listado") {
+        modoVistaActual = "subtotales";
+        btn.innerText = "📋 Ver Listado";
+        btn.style.backgroundColor = "var(--gray-btn)";
+      } else {
+        modoVistaActual = "listado";
+        btn.innerText = "📊 Ver SubTotales";
+        btn.style.backgroundColor = "var(--primary)";
       }
+      actualizarTablaVista();
+    }
+
+    // --- 📋 RENDERIZADOR INDUSTRIAL DE TABLAS (CON ENCABEZADOS EN DOBLE LINEA) ---
+    function actualizarTablaVista() {
+      const tbody = document.getElementById('tabla-cuerpo');
+      const thead = document.getElementById('tabla-encabezado');
+      if (!tbody || !thead) return;
+
+      tbody.innerHTML = "";
+
+      // VISTA 1: LISTADO CRONOLÓGICO INDIVIDUAL
+      if (modoVistaActual === "listado") {
+        thead.innerHTML = `
+          <tr>
+            <th style="width: 15%;">HORA</th>
+            <th style="width: 45%;">PRODUCTO QR</th>
+            <th style="width: 25%;">SKU</th>
+            <th style="width: 15%;">NUBE<br>(SINCRO)</th>
+          </tr>
+        `;
+
+        historialLecturas.forEach(reg => {
+          const fila = document.createElement('tr');
+          const esPausa = reg.sku === "PAUSA";
+          const esDefecto = reg.shadowBoton !== "OK" && !esPausa;
+
+          if (esDefecto) fila.className = "row-reparar";
+          if (esPausa) fila.className = "row-pausa";
+
+          // Estado del Badge de Sincronización con tu JSON real CORS
+          let statusBadge = "";
+          if (reg.sincronizado) {
+            statusBadge = `<span class="badge-sincro ok">🟢 OK</span>`;
+          } else {
+            statusBadge = `<span class="badge-sincro espera">⏳ Reintentando...</span>`;
+          }
+
+          fila.innerHTML = `
+            <td>${reg.fechaHora}</td>
+            <td style="font-family: monospace; font-weight: bold; text-align: left; padding-left: 6px;">${reg.qrSerial}</td>
+            <td><strong>${reg.sku}</strong></td>
+            <td>${statusBadge}</td>
+          `;
+          tbody.appendChild(fila);
+        });
+
+      // VISTA 2: RESUMEN DE SUBTOTALES Y SEGUNDOS TOTALES ACUMULADOS
+      } else if (modoVistaActual === "subtotales") {
+        thead.innerHTML = `
+          <tr>
+            <th style="width: 35%;">SKU PRODUCTO<br>/ EVENTO</th>
+            <th style="width: 20%;">CANTIDAD<br>VÁLIDA</th>
+            <th style="width: 20%;">CANTIDAD<br>RECHAZO</th>
+            <th style="width: 25%;">DURACIÓN<br>TOTAL</th>
+          </tr>
+        `;
+
+        const agrupadoSKU = {};
+
+
+
+
+        historialLecturas.forEach(reg => {
+          const clave = reg.sku.trim().toUpperCase();
+          if (!agrupadoSKU[clave]) {
+            agrupadoSKU[clave] = { sku: clave, validos: 0, rechazados: 0, tiempoTotal: 0 };
+          }
+
+          if (clave === "PAUSA") {
+            agrupadoSKU[clave].validos++; 
+            agrupadoSKU[clave].tiempoTotal += reg.tiempoPropio;
+          } else {
+            if (reg.shadowBoton !== "OK") {
+              agrupadoSKU[clave].rechazados++;
+            } else {
+              agrupadoSKU[clave].validos++;
+            }
+            agrupadoSKU[clave].tiempoTotal += reg.tiempoPropio;
+          }
+        });
+
+        Object.values(agrupadoSKU).forEach(item => {
+          const fila = document.createElement('tr');
+          const esFilaPausa = item.sku === "PAUSA";
+          
+          if (esFilaPausa) fila.className = "row-pausa";
+
+          fila.innerHTML = `
+            <td style="text-align: left; padding-left: 10px;"><strong>${item.sku}</strong></td>
+            <td style="color: var(--success); font-weight: bold;">${esFilaPausa ? `${item.validos} ev.` : `${item.validos} u.`}</td>
+            <td style="color: ${item.rechazados > 0 ? 'var(--danger)' : '#9ca3af'}; font-weight: ${item.rechazados > 0 ? 'bold' : 'normal'};">
+              ${esFilaPausa ? "-" : `${item.rechazados} u.`}
+            </td>
+            <td style="font-weight: bold; font-family: monospace; color: #1e293b;">${item.tiempoTotal}s</td>
+          `;
+          tbody.appendChild(fila);
+        });
+
+        if (Object.keys(agrupadoSKU).length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:#9ca3af;">No hay registros capturados.</td></tr>`;
+        }
+      }
+    }
+
+    // --- 🔒 TRANSMISIÓN CON MODO CORS Y LECTURA DE TU JSON {"resultado":"ok"} ---
+    function enviarAGoogleSheets(objetoRegistro) {
+      if (!navigator.onLine || objetoRegistro.reintentando) return;
+
+      objetoRegistro.reintentando = true;
 
       fetch(URL_GOOGLE_APP, {
         method: "POST",
-        mode: "cors", // Activación real de CORS para escuchar las confirmaciones del Sheets
+        mode: "cors", 
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(objetoRegistro)
       })
-      .then(res => res.json()) // Recibe tu JSON {"resultado": "ok"} de la planilla
+      .then(res => res.json()) 
       .then(datosPlanilla => {
+        objetoRegistro.reintentando = false;
         if (datosPlanilla && datosPlanilla.resultado === "ok") {
           objetoRegistro.sincronizado = true;
-          console.log("Confirmación CORS recibida con éxito de Google Sheets.");
+          actualizarTablaVista();
+          console.log("Sincronización confirmada exitosamente por Google Sheets.");
         }
       })
       .catch(err => {
-        console.error("Error de red o colisión de celdas en la nube:", err);
-        objetoRegistro.sincronizado = false;
+        objetoRegistro.reintentando = false;
+        console.warn("Fallo temporal de red. El registro queda en cola de insistencia.");
       });
     }
 
+    // --- 🔄 MOTOR DE INSISTENCIA AUTOMÁTICA EN SEGUNDO PLANO ---
+    function procesarColaPendientesNube() {
+      if (!navigator.onLine) return;
+
+      // Filtramos todas las filas que no tengan el ticket de sincronizado y las re-enviamos
+      const pendientes = historialLecturas.filter(r => !r.sincronizado && !r.reintentando);
+      
+      if (pendientes.length > 0) {
+        console.log(`Cola Activa: reintentando procesar ${pendientes.length} registros pendientes...`);
+        pendientes.forEach(reg => {
+          enviarAGoogleSheets(reg);
+        });
+      }
+    }
+
+    function limpiarHistorialVista() {
+      historialLecturas = [];
+      timestampUltimoHito = Date.now();
+      actualizarTablaVista();
+    }
+
+    // --- 📷 INTERFAZ DE HARDWARE DE CÁMARA ---
     function simularToggleCamara() {
       if (!camaraActivaHardware) {
         camaraActivaHardware = true;
-        console.log("Lente de cámara dispuesto. Estado prefijado: " + seleccionCalidadActiva);
-        // Aquí ejecutas tu encenderCamaraBodega() nativa real de DBS
+        console.log("Cámara encendida. Buscando QR continuo.");
       } else {
         camaraActivaHardware = false;
       }
@@ -493,7 +677,6 @@
       
       setTimeout(() => { 
         modal.style.display = "none"; 
-        // Auto-repara la barra inferior y devuelve el Pareto al OK verde nativo
         restaurarBotoneraInferior();
         fijarEstadoCalidad('OK', document.getElementById('btn-ok-base'));
       }, 1300);
