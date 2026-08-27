@@ -363,19 +363,90 @@ const nuevoRegistro = {
 }
 
 // 5. MANEJO NATIVO DE HARDWARE (CÁMARA / DETECTOR)
-function simularToggleCamara() {
-    // Al abrir guardamos en la memoria temporal el botón que estaba activo
+// Variable global para controlar la transmisión de video
+let streamActivoBodega = null;
+
+async function simularToggleCamara() {
+    // Al abrir guardamos en la memoria el botón que estaba activo
     estadoCalidadPrevio = seleccionCalidadActiva;
     
-    if (!camaraActivaHardware) {
-        camaraActivaHardware = true;
-        console.log("Cámara encendida. Estado guardado:", estadoCalidadPrevio);
-        // Aquí se dispara el hardware nativo de la cámara trasera de bodega
-        // Para pruebas manuales, el cuadro de texto queda listo para recibir foco
-        document.getElementById('txt-lector').focus();
+    // Si la cámara ya está activa, el botón actúa para apagarla (Cancelar)
+    if (camaraActivaHardware) {
+        apagarCamaraHardware();
+        return;
+    }
+
+    // Levantamos visualmente la ventana del escáner inyectando el visor dinámico si no existe
+    let modal = document.getElementById('modal-escaner');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-escaner';
+        modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;";
+        modal.innerHTML = `
+            <div style="width:320px; height:320px; border:4px dashed #0d6efd; border-radius:12px; overflow:hidden; background:#000; position:relative;">
+                <video id="video-bodega-stream" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                <div style="position:absolute; top:50%; left:10%; width:80%; height:2px; background:rgba(255,0,0,0.8); box-shadow:0 0 4px #ff0000; pointer-events:none;"></div>
+            </div>
+            <button onclick="apagarCamaraHardware()" style="margin-top:25px; padding:14px 30px; background:#dc3545; color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">❌ Cancelar Escaneo</button>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    modal.style.display = "flex";
+    camaraActivaHardware = true;
+
+    // Encendido del hardware físico (Lente Trasero "environment" a alta resolución)
+    try {
+        streamActivoBodega = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false
+        });
+        const videoElemento = document.getElementById('video-bodega-stream');
+        videoElemento.srcObject = streamActivoBodega;
+        
+        // Iniciamos el bucle de análisis rápido acelerado cada 180 milisegundos
+        window.bucleEscaneo = setInterval(analizarCuadroCamara, 180);
+    } catch (err) {
+        alert("Acceso al hardware bloqueado. Asegúrese de dar permisos de cámara en la barra de direcciones HTTPS.");
+        apagarCamaraHardware();
+    }
+}
+
+// Bucle analizador compatible cross-platform
+async function analizarCuadroCamara() {
+    const video = document.getElementById('video-bodega-stream');
+    if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+    // Si el dispositivo tiene soporte nativo (Android Chrome), procesa de forma acelerada por GPU
+    if ('BarcodeDetector' in window) {
+        try {
+            const detector = new BarcodeDetector({ formats: ['qr_code', 'code_128', 'ean_13'] });
+            const codigos = await detector.detect(video);
+            if (codigos.length > 0) {
+                document.getElementById('txt-lector').value = codigos[0].rawValue;
+                apagarCamaraHardware();
+                procesarLectura({ key: 'Enter' }); // Disparador automático
+            }
+        } catch (e) { /* Silencio en bucle */ }
     } else {
-        camaraActivaHardware = false;
-        procesarLectura({ key: 'Enter' }); // Lanza el retorno automático si se cierra sin leer
+        // FALLBACK DISPOSITIVOS DE PLANTA (Si la pistola de lectura es el único canal o usas iOS)
+        // El visor se mantendrá abierto permitiendo enfocar el objetivo para el operario
+    }
+}
+
+function apagarCamaraHardware() {
+    clearInterval(window.bucleEscaneo);
+    if (streamActivoBodega) {
+        streamActivoBodega.getTracks().forEach(track => track.stop());
+    }
+    const modal = document.getElementById('modal-escaner');
+    if (modal) modal.style.display = "none";
+    
+    camaraActivaHardware = false;
+    
+    // Si se cerró sin lectura, procesa la excepción vacía para retornar los botones al estado inicial
+    if (document.getElementById('txt-lector').value.trim() === "") {
+        procesarLectura({ key: 'Enter' });
     }
 }
 
