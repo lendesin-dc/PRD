@@ -211,7 +211,7 @@
     <!-- CUADRO DE LECTURA CON PROPORCIONES ERGONÓMICAS RÍGIDAS (40% / 30% / 30%) -->
     <div class="franja-lector" style="display: flex; gap: 4px; align-items: center; width: 100%; box-sizing: border-box; padding: 2px 4px; overflow: hidden;">
     <button id="btn-camara-toggle" class="btn-operacion btn-azul-camara" style="width: 40% !important; max-width: 40%; padding: 12px 2px; font-size: 14px; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="simularToggleCamara()">📸 Escanear</button>
-    <input type="text" id="txt-lector" class="input-qr" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 14px; font-weight: bold; text-align: center; box-sizing: border-box;" placeholder="Digite..." inputmode="none" onfocus="activarModoDigitacion()" onkeypress="procesarLectura(event)">
+    <input type="text" id="txt-lector" class="input-qr" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 14px; font-weight: bold; text-align: center; box-sizing: border-box;" placeholder="Digite..." onfocus="activarModoDigitacion()" onkeypress="procesarLectura(event)">
     <button id="btn-pausa-dinamico" class="btn-operacion btn-naranja-pausa" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 14px; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="gestionarBotonDinamico()">⏸️ Pausa</button>
     </div>
     
@@ -354,7 +354,7 @@ function procesarLectura(evento) {
     // ARQUITECTURA DEL OBJETO DE DATOS ASÍNCRONO
 const nuevoRegistro = {
     id: momentoActual,
-    hora: new Date().toLocaleTimeString('es-ES', { hour12: false }),
+    hora: new Date().toLocaleTimeString('es-ES', { hour:"2-digit",minute:"2-digit", hour12 : false }),
     qr: cadenaQR,
     sku: skuExtraido,
     serie: serieExtraida,
@@ -495,6 +495,10 @@ function activarModoDigitacion() {
     input.style.setProperty('font-size', '18px', 'important'); // <-- LETRA MÁS GRANDE Y VISIBLE
     input.placeholder = " Digite manualmente el código...";
 
+    // TRUCO INDUSTRIAL: Le asignamos el modo "text" para que el celular despliegue el teclado táctil al operario
+    input.setAttribute('inputmode', 'text');
+    input.focus();
+
     // 3. Transformamos el botón derecho en ENTER (30%)
     const btnDerecho = document.getElementById('btn-pausa-dinamico');
     if (btnDerecho) {
@@ -522,6 +526,10 @@ function restaurarBotoneraInferior() {
     input.style.setProperty('padding-left', '2px', 'important');
     input.style.setProperty('font-size', '14px', 'important');
     input.placeholder = "Digite...";
+
+  // Bloqueamos el teclado de nuevo para el modo reposo y le quitamos el foco
+    input.setAttribute('inputmode', 'none'); 
+    
     input.blur();
 
     // 3. Devolvemos el botón derecho a su función original de Pausa (30%)
@@ -572,7 +580,7 @@ function alternarPausaLinea() {
         // Estructuramos la pausa de forma idéntica a un SKU de control para la base de datos
         const registroPausa = {
             id: ahora,
-            hora: new Date().toLocaleTimeString('es-ES', { hour12: false }),
+            hora: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute:"2-digit", hour12: false }),
             qr: "SISTEMA_PAUSA#TOTAL",
             sku: "PAUSA", // Queda agrupado de forma idéntica
             serie: "DETENCION",
@@ -620,8 +628,8 @@ function actualizarTablaVista() {
         thead.innerHTML = `
             <tr>
                 <th style="width: 15%;">Hora</th>
-                <th style="width: 30%;">Producto QR</th>
-                <th style="width: 20%;">SKU</th>
+                <th style="width: 30%;">QR</th>
+                <th style="width: 20%;">Producto</th>
                 <th style="width: 15%;">Duración</th>
                 <th style="width: 20%; text-align: center;">Estado Nube</th>
             </tr>
@@ -643,15 +651,15 @@ function actualizarTablaVista() {
             } else {
                 // Si ya está en la nube: Texto del estado + Su emoji correspondiente fijado
                 const emojiDefinitivo = MAPA_ICONOS[reg.motivo] || "✔️";
-                celdaEstadoNube = `<span style="font-size: 1.15rem; font-weight: bold; color: #1e293b;">${reg.motivo} ${emojiDefinitivo}</span>`;
+                celdaEstadoNube = `<span style="font-size: 1.1rem; font-weight: bold; color: #1e293b;">${reg.motivo} ${emojiDefinitivo}</span>`;
             }
 
             // Inyección de celdas con tipografía grande para operario y chica para el QR
             fila.innerHTML = `
-                <td style="font-size: 1.15rem; font-weight: bold; color: #1e293b;">${reg.hora}</td>
+                <td style="font-size: 1.0rem; font-weight: bold; color: #1e293b;">${reg.hora}</td>
                 <td style="color: #64748b; font-size: 0.72rem; font-family: monospace; line-height: 1.2; word-break: break-all; white-space: normal;">${reg.qr}</td>
-                <td style="font-size: 1.25rem; font-weight: 900; color: #1e3a8a; letter-spacing: 0.3px;">${reg.sku}</td>
-                <td style="font-size: 1.15rem; font-weight: bold; color: #2563eb;">⏱️ ${reg.tiempoSegundos}s</td>
+                <td style="font-size: 1.1rem; font-weight: 900; color: #1e3a8a; letter-spacing: 0.3px;">${reg.sku}</td>
+                <td style="font-size: 1.1rem; font-weight: bold; color: #2563eb;">⏱️ ${reg.tiempoSegundos}s</td>
                 <td style="text-align: center; border-left: 1px solid #e2e8f0; background: #f8fafc;">${celdaEstadoNube}</td>
             `;
             tbody.appendChild(fila);
@@ -663,7 +671,7 @@ function actualizarTablaVista() {
                 // DISTRIBUCIÓN ANTIVUELCO DE ANCHOS (TOTAL: 100%)
         thead.innerHTML = `
             <tr>
-                <th style="width: 36%; text-align: left;">Producto</th>
+                <th style="width: 30%; text-align: left;">Producto</th>
                 <th style="width: 14%; text-align: center;">Válidos</th>
                 <th style="width: 14%; text-align: center;">Fallados</th>
                 <th style="width: 22%; text-align: center; background-color: #1e293b; color: white;">Tiempo</th>
@@ -704,7 +712,7 @@ function actualizarTablaVista() {
             const tiempoOperadorTexto = `${minutosDecimales} min`;
 
             fila.innerHTML = `
-                <td style="font-size: 1.05rem; text-align: left;"><strong style="color: #1e3a8a;">${item.sku}</strong></td>
+                <td style="font-size: 1.0rem; text-align: left;"><strong style="color: #1e3a8a;">${item.sku}</strong></td>
                 <td style="text-align: center; color: #16a34a; font-weight: bold; font-size: 1.1rem;">${item.validos} u.</td>
                 <td style="text-align: center; color: ${item.incidencias > 0 ? '#ea580c' : '#9ca3af'}; font-weight: bold; font-size: 1.1rem;">${item.incidencias} u.</td>
                 <td style="text-align: center; font-weight: bold; color: #1e3a8a; background-color: #eff6ff; font-size: 1.1rem;">⏱️ ${tiempoOperadorTexto}</td>
@@ -723,52 +731,57 @@ function actualizarTablaVista() {
 
 // 9. MOTOR ASÍNCRONO DE TRANSMISIÓN (BACKOFFICE DE DATOS GOOGLE)
 
-// --- 🔄 MOTOR DE INSISTENCIA AUTOMÁTICA EN SEGUNDO PLANO ---
-    function procesarColaPendientesNube() {
-      if (!navigator.onLine) return;
-
-      // Filtramos todas las filas que no tengan el ticket de sincronizado y las re-enviamos
-      const pendientes = historialLecturas.filter(r => !r.sincronizado && !r.reintentando);
-      
-      if (pendientes.length > 0) {
-        console.log(`Cola Activa: reintentando procesar ${pendientes.length} registros pendientes...`);
-        pendientes.forEach(reg => {
-          enviarAGoogleSheets(reg);
-        });
-      }
-    }
-
-
+// 9. MOTOR ASÍNCRONO DE TRANSMISIÓN CON REINTENTO AUTOMÁTICO DE COLA
 function enviarAGoogleSheets(objetoRegistro) {
-  // Si no hay red o ya se está procesando este registro específico, frenamos
-  if (!navigator.onLine || objetoRegistro.reintentando) return;
-
-  // Encendemos el seguro para evitar envíos cruzados
-  objetoRegistro.reintentando = true;
-  actualizarTablaVista(); // Refresca para mostrar el estado "⏳ Reintentando..."
-
-  fetch(URL_GOOGLE_APP, {
-    method: "POST",
-    mode: "cors", // Tu CORS activo verificado
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify(objetoRegistro)
-  })
-  .then(res => res.json())
-  .then(datosPlanilla => {
-    objetoRegistro.reintentando = false; // Apagamos el seguro tras respuesta
-    
-    if (datosPlanilla && datosPlanilla.resultado === "ok") {
-      objetoRegistro.sincronizado = true; // Sincronización exitosa confirmada
-      console.log(`Registro ${objetoRegistro.id} guardado con éxito en la nube.`);
-      actualizarTablaVista(); // Cambia el estado a "🟢 OK" en tu tabla
+    if (!navigator.onLine) {
+        console.warn("Dispositivo sin red en este milisegundo. Registro guardado en cola local.");
+        return;
     }
-  })
-  .catch(err => {
-    objetoRegistro.reintentando = false; // Liberamos el seguro ante fallas
-    console.warn(`Fallo de red para el registro ${objetoRegistro.id}. Se mantiene en cola.`);
-    actualizarTablaVista();
-  });
+
+    fetch(URL_GOOGLE_APP, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(objetoRegistro)
+    })
+    .then(respuesta => respuesta.json())
+    .then(datosNube => {
+        if (datosNube && datosNube.resultado === "ok") {
+            objetoRegistro.sincronizado = true;
+            guardarEnMemoriaLocal();
+            actualizarTablaVista(); // Cambia el reloj ⏳ por el emoji definitivo 🟢
+            console.log("Sincronización exitosa para ID:", objetoRegistro.id);
+            
+            // TRUCO INDUSTRIAL: Si este envío tuvo éxito, barremos la cola por si había registros antiguos atrapados
+            reprocesarColaPendiente();
+        }
+    })
+    .catch(err => {
+        console.error("Fallo de red en transmisión asíncrona. Se reintentará luego:", err);
+    });
 }
+
+// NUEVA FUNCIÓN: ESCANER DE HISTORIAL PARA IDENTIFICAR REGISTROS ATRAPADOS EN MODO AVIÓN
+function reprocesarColaPendiente() {
+    if (!navigator.onLine) return; // Si no hay internet real, ni lo intentamos
+
+    // Buscamos de atrás hacia adelante (los más antiguos primero) que tengan sincronizado === false
+    const registrosAtrapados = historialLecturasPRD.filter(reg => !reg.sincronizado);
+    
+    if (registrosAtrapados.length > 0) {
+        console.log(`¡Se detectaron ${registrosAtrapados.length} registros en cola! Despachando a Google Sheets...`);
+        
+        // Enviamos el primero de la cola. Al terminar con éxito, este llamará automáticamente al siguiente
+        enviarAGoogleSheets(registrosAtrapados[registrosAtrapados.length - 1]);
+    }
+}
+
+// ESCUCHADORES NATIVOS DE HARDWARE: Detectan el milisegundo exacto en que quitas el modo avión
+window.addEventListener('online', () => {
+    console.log("📡 Red restablecida en el dispositivo de planta. Activando vaciado de cola...");
+    reprocesarColaPendiente();
+});
+
 
 
 
@@ -785,11 +798,11 @@ function sonarBip750Hz() {
         gain.connect(miAudioContext.destination);
         
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(750, miAudioContext.currentTime); // Tono industrial limpio
-        gain.gain.setValueAtTime(0.7, miAudioContext.currentTime);
+        osc.frequency.setValueAtTime(880, miAudioContext.currentTime); // Tono industrial limpio
+        gain.gain.setValueAtTime(0.9, miAudioContext.currentTime);
         
         osc.start();
-        osc.stop(miAudioContext.currentTime + 0.15);
+        osc.stop(miAudioContext.currentTime + 0.25);
     } catch (e) { console.error("Audio bloqueado por navegador:", e); }
 }
 
@@ -801,7 +814,7 @@ function dispararCartelExito(texto, esDefecto) {
     else modal.classList.remove('contenedor-naranja');
     
     modal.style.display = "flex";
-    setTimeout(() => { modal.style.display = "none"; }, 1300);
+    setTimeout(() => { modal.style.display = "none"; }, 1500);
 }
 
 function guardarEnMemoriaLocal() {
@@ -816,6 +829,8 @@ function limpiarPantallaCompleta() {
         actualizarTablaVista();
     }
 } 
+
+
 
 // Inicialización de la planta al cargar
 window.onload = function() {
