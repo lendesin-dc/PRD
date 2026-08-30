@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro de Bodega S - Control de Calidad</title>
+    <title>Registro de Revisión</title>
     <style>
         /* Ajustes de diseño adaptables (Mobile-First) e Industriales */
         :root {
@@ -27,7 +27,7 @@
         }
 
         .contenedor { 
-            max-width: 950px; 
+            max-width: 750px; 
             margin: 0 auto; 
             background: white; 
             padding: 8px; 
@@ -41,7 +41,7 @@
 .pareto-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
@@ -49,9 +49,9 @@
     background: #f8fafc;
     border: 2px solid #cbd5e1;
     border-radius: 8px;
-    padding: 10px 2px;
+    padding: 15px 2px;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -63,7 +63,7 @@
 }
 
 .btn-prd span.icono {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     line-height: 1;
 }
 
@@ -85,7 +85,7 @@
 
         /* LECTOR Y CONTROLES INFERIORES */
         .franja-lector { 
-            margin-bottom: 12px; 
+            margin-bottom: 22px; 
             background: #e7f1ff; 
             padding: 8px; 
             border-radius: 6px; 
@@ -97,8 +97,8 @@
 
         .input-qr { 
             flex-grow: 1;
-            padding: 10px; 
-            font-size: 18px; 
+            padding: 8px; 
+            font-size: 1rem; 
             caret-color: #2563eb; /* Pinta el cursor de azul eléctrico para que resalte */
             font-weight: 800;    /* Vuelve las letras y el cursor mucho más gruesos al escribir */
     
@@ -131,7 +131,7 @@
             border: none;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 1.2rem;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -145,9 +145,9 @@
 
         /* TABLA DE REGISTROS */
         .tabla-contenedor { overflow-x: auto; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 850px; }
-        th { background: #212529; color: white; padding: 9px 6px; text-transform: uppercase; font-size: 12px; }
-        td { padding: 8px 6px; border-bottom: 1px solid #dee2e6; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 650px; }
+        th { background: #212529; color: white; padding: 9px 3px; text-transform: uppercase; font-size: 12px; }
+        td { padding: 8px 4px; border-bottom: 1px solid #dee2e6; }
         tr.row-reparar { background-color: #fff7ed !important; }
         tr.row-pausa-sistema { background-color: #fef2f2 !important; }
 
@@ -182,48 +182,48 @@
    <!-- PANEL DE CONTROL DE CALIDAD EN CUADRÍCULA ERGONÓMICA DE 3 COLUMNAS -->
 <div class="pareto-grid">
     <button id="btn-ok-base" class="btn-prd ok-active" onclick="fijarEstadoCalidad('OK', this)">
-        <span class="icono">🟢</span>
-        <span>OK</span>
+        <span class="icono">OK 🟢</span>
+    <!--    <span>OK</span>  -->
     </button>
     <button class="btn-prd" onclick="fijarEstadoCalidad('DD', this)">
-        <span class="icono">⚠️</span>
-        <span>DD</span>
+        <span class="icono">DD ⚠️</span>
+     <!--   <span>DD</span> -->
     </button>
     <button class="btn-prd" onclick="fijarEstadoCalidad('FUGA', this)">
-        <span class="icono">💧</span>
-        <span>FUGA</span>
+        <span class="icono">FUGA 💧</span>
+     <!--   <span>FUGA</span> -->
     </button>
     <button class="btn-prd" onclick="fijarEstadoCalidad('ELEC', this)">
-        <span class="icono">⚡</span>
-        <span>ELEC</span>
+        <span class="icono">ELEC ⚡</span>
+     <!--   <span>ELEC</span> -->
     </button>
     <button class="btn-prd" onclick="fijarEstadoCalidad('COMP', this)">
-        <span class="icono">⚙️</span>
-        <span>COMP</span>
+        <span class="icono">COMP ⚙️</span>
+     <!--   <span>COMP</span> -->
     </button>
     <button class="btn-prd" onclick="fijarEstadoCalidad('EMB', this)">
-        <span class="icono">📦</span>
-        <span>EMB</span>
+        <span class="icono">EMB 📦</span>
+     <!--   <span>EMB</span> -->
     </button>
 </div>
 
 
     <!-- CUADRO DE LECTURA CON PROPORCIONES ERGONÓMICAS RÍGIDAS (40% / 30% / 30%) -->
     <div class="franja-lector" style="display: flex; gap: 4px; align-items: center; width: 100%; box-sizing: border-box; padding: 2px 4px; overflow: hidden;">
-    <button id="btn-camara-toggle" class="btn-operacion btn-azul-camara" style="width: 40% !important; max-width: 40%; padding: 12px 2px; font-size: 14px; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="simularToggleCamara()">📸 Escanear</button>
-    <input type="text" id="txt-lector" class="input-qr" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 14px; font-weight: bold; text-align: center; box-sizing: border-box;" placeholder="Digite..." onfocus="activarModoDigitacion()" onkeypress="procesarLectura(event)">
-    <button id="btn-pausa-dinamico" class="btn-operacion btn-naranja-pausa" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 14px; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="gestionarBotonDinamico()">⏸️ Pausa</button>
+    <button id="btn-camara-toggle" class="btn-operacion btn-azul-camara" style="width: 40% !important; max-width: 40%; padding: 8px 2px; font-size: 1.6rem; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="simularToggleCamara()">📸 Escanear</button>
+    <input type="text" id="txt-lector" class="input-qr" style="width: 30% !important; max-width: 30%; padding: 12px 2px; font-size: 1rem; font-weight: bold; text-align: center; box-sizing: border-box;" placeholder="Digite..." onfocus="activarModoDigitacion()" onkeypress="procesarLectura(event)">
+    <button id="btn-pausa-dinamico" class="btn-operacion btn-naranja-pausa" style="width: 30% !important; max-width: 30%; padding: 8px 2px; font-size: 1.6rem; font-weight: bold; white-space: nowrap; box-sizing: border-box;" onclick="gestionarBotonDinamico()">⏸️ Pausa</button>
     </div>
     
     <!-- CONTROL HISTORIAL INTERACTIVO -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <h3 style="margin: 0; font-family: sans-serif; font-size: 1rem;">Registros</h3>
-            <button id="btn-cambiar-modo" onclick="conmutarModoVista()" style="background-color: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;">
-                 Ver SubTotales
+            <h3 style="margin: 0; font-family: sans-serif; font-size: 1.1rem;">Registros</h3>
+            <button id="btn-cambiar-modo" onclick="conmutarModoVista()" style="background-color: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s;">
+                 📊 Ver SubTotales
             </button>
         </div>
-        <button id="btn-limpiar-vista" onclick="limpiarPantallaCompleta()" style="background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight:bold; font-size: 0.85rem;">Limpiar Vista</button>
+        <button id="btn-limpiar-vista" onclick="limpiarPantallaCompleta()" style="background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight:bold; font-size: 1rem;">Limpiar Vista</button>
     </div>
 
     <!-- VISOR DE TABLAS PRINCIPALES -->
@@ -242,7 +242,11 @@
     <div id="sku-contenedor-cartel" style="background:rgba(0,0,0,0.2); padding: 20px 40px; border-radius: 12px; margin-top: 15px; min-width: 300px;">
         <div style="font-size: 1.1rem; opacity: 0.85; margin-bottom: 5px;">SKU PROCESADO:</div>
         <div id="modal-sku" style="font-size: 2.8rem; font-weight: 900; line-height: 1; word-break: break-all;">-</div>
+        <div style="font-size: 1.1rem; opacity: 0.85; margin-bottom: 5px;">SERIE:</div>
+        <div id="modal-serie" style="font-size: 2.8rem; font-weight: 900; line-height: 1; word-break: break-all;">-</div>
     </div>
+    <div style="font-size: 1.0rem; margin-top: 30px; opacity: 0.7; font-style: italic;">Continuando en 2 segundos...</div>
+
 </div>
 
 
@@ -250,8 +254,8 @@
 <div id="capa-pausa" class="capa-pausa">
     <div style="font-size: 7rem; margin-bottom: 10px;">⏸️</div>
     <div style="font-size: 3rem; font-weight: 900; letter-spacing: 1px;">LÍNEA PAUSADA</div>
-    <div style="font-size: 1.3rem; opacity: 0.85; margin-bottom: 35px; font-style: italic;">Auditoría de tiempos muertos activa para gerencia.</div>
-    <button onclick="gestionarBotonDinamico()" style="background: white; color: var(--warning); border: none; padding: 18px 50px; border-radius: 8px; font-weight: 900; font-size: 1.3rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+    <div style="font-size: 1.5rem; opacity: 0.85; margin-bottom: 35px; font-style: italic;">Registro de Paros.</div>
+    <button onclick="gestionarBotonDinamico()" style="background: blue; color: var(--warning); border: none; padding: 18px 50px; border-radius: 8px; font-weight: 900; font-size: 1.8rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
         ▶️ REANUDAR OPERACIÓN
     </button>
 </div>
@@ -326,9 +330,9 @@ function procesarLectura(evento) {
     }
 
     const segmentos = cadenaQR.split('#');
-    const skuExtraido = segmentos[0] || 'ERROR';
-    const serieExtraida = segmentos[1] || 'NO APRECIABLE';
-    const loteExtraido = segmentos[2] || 'SIN LOTE'; 
+    const skuExtraido = segmentos[0] || '-';
+    const serieExtraida = segmentos[1] || '-';
+    const loteExtraido = segmentos[2] || '-'; 
     //const estadoOrdenExtraido = segmentos[2] || seleccionCalidadActiva;
 
     // VERIFICACIÓN DE REPETIDOS (RESTRICCIÓN DE MENOS DE 5 MINUTOS)
@@ -370,7 +374,9 @@ const nuevoRegistro = {
 
     // EMISIÓN DE AVISOS ACÚSTICOS INDUSTRIALES Y PANTALLA GIGANTE
     sonarBip750Hz();
-    dispararCartelExito(skuExtraido + (seleccionCalidadActiva !== "OK" ? ` (${seleccionCalidadActiva})` : ""), seleccionCalidadActiva !== "OK");
+    dispararCartelExito(skuExtraido + (seleccionCalidadActiva !== "OK" ? ` (${seleccionCalidadActiva})` : ""), 
+                        serieExtraida,
+                        seleccionCalidadActiva !== "OK");
 
     // FLUJO DE RETORNO EXCELENTE: Vuelve los botones a modo inicial (OK seleccionado)
     restaurarBotoneraInferior();
@@ -806,15 +812,15 @@ function sonarBip750Hz() {
     } catch (e) { console.error("Audio bloqueado por navegador:", e); }
 }
 
-function dispararCartelExito(texto, esDefecto) {
+function dispararCartelExito(textosku, textoserie, esDefecto) {
     const modal = document.getElementById('modal-exito');
-    document.getElementById('modal-sku').innerText = texto;
-    
+    document.getElementById('modal-sku').innerText = textosku;
+    document.getElementById('modal-serie').innerText = textoserie;
     if (esDefecto) modal.classList.add('contenedor-naranja');
     else modal.classList.remove('contenedor-naranja');
     
     modal.style.display = "flex";
-    setTimeout(() => { modal.style.display = "none"; }, 1500);
+    setTimeout(() => { modal.style.display = "none"; }, 5500);
 }
 
 function guardarEnMemoriaLocal() {
