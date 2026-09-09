@@ -306,7 +306,7 @@ function fijarEstadoCalidad(codigo, boton) {
 function pantallaVerdePresionada() {
   // 1. Escondemos el cartel de éxito
   document.getElementById('modal-exito').style.display = "none";
-  if (estadoCalidadActiva === "OK") {
+  if (seleccionCalidadActiva === "OK") {
     // 2. LLAMAMOS AL ENCENDIDO ORIGINAL (Levanta el hardware de cero de forma limpia)
     simularToggleCamara(); //
   } else { 
