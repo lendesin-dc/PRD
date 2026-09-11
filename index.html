@@ -236,7 +236,7 @@
 </div>
 
 <!-- VENTANA EMERGENTE GIGANTE: ANUNCIOS DE REVISIÓN -->
-<div id="modal-exito" onclick="pantallaVerdePresionada()" class="modal-exito">
+<div id="modal-exito" class="modal-exito">
     <div style="font-size: 6rem; margin-bottom: 5px;">✅</div>
     <div style="font-size: 2.2rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">Lectura Registrada</div>
     <div id="sku-contenedor-cartel" style="background:rgba(0,0,0,0.2); padding: 20px 40px; border-radius: 12px; margin-top: 15px; min-width: 300px;">
@@ -245,7 +245,7 @@
         <div style="font-size: 1.1rem; opacity: 0.85; margin-bottom: 5px;">SERIE:</div>
         <div id="modal-serie" style="font-size: 2.8rem; font-weight: 900; line-height: 1; word-break: break-all;">-</div>
     </div>
-    <div style="font-size: 1.0rem; margin-top: 30px; opacity: 0.7; font-style: italic;"> 👇 TOQUE LA PANTALLA <br> PARA <br> EL SIGUIENTE QR 👇 </div>
+    <div style="font-size: 1.0rem; margin-top: 30px; opacity: 0.7; font-style: italic;">Continuando en 2 segundos...</div>
 
 </div>
 
@@ -301,17 +301,6 @@ function fijarEstadoCalidad(codigo, boton) {
         boton.classList.add('pareto-active');
     }
     console.log("Estado seleccionado listo para captura:", seleccionCalidadActiva);
-}
-
-function pantallaVerdePresionada() {
-  // 1. Escondemos el cartel de éxito
-  document.getElementById('modal-exito').style.display = "none";
-  if (seleccionCalidadActiva === "OK") {
-    // 2. LLAMAMOS AL ENCENDIDO ORIGINAL (Levanta el hardware de cero de forma limpia)
-    simularToggleCamara(); //
-  } else { 
-    modal.style.display = "none";
-  }
 }
 
 // 4. PROCESADOR DE ENTRADA CENTRAL DE DATOS (BACKOFFICE DE LECTURA)
@@ -831,7 +820,7 @@ function dispararCartelExito(textosku, textoserie, esDefecto) {
     else modal.classList.remove('contenedor-naranja');
     
     modal.style.display = "flex";
-    //setTimeout(() => { modal.style.display = "none"; }, 5500);
+    setTimeout(() => { modal.style.display = "none"; }, 5500);
 }
 
 function guardarEnMemoriaLocal() {
