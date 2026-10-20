@@ -634,7 +634,7 @@ async function simularToggleCamaraEvidencia() {
     
     try {
         streamActivoBodega = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+            video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 360 } },
             audio: false
         });
         document.getElementById('video-evidencia-stream').srcObject = streamActivoBodega;
@@ -657,7 +657,7 @@ function confirmarYCapturarFotoLocal() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     // Guardamos la foto comprimida en la variable global de cabecera
-    fotoEvidenciaBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+    fotoEvidenciaBase64 = canvas.toDataURL('image/jpeg', 0.4); 
     console.log("📸 Evidencia resguardada en memoria. Esperando lectura láser o teclado...");
 
     // Apagamos la cámara de forma limpia y cerramos la ventana
