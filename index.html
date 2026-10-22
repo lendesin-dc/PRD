@@ -528,13 +528,13 @@ async function exportar() {
 
     // --- NUEVO  CONTENIDO AL CORREO VÍA WEB APP ---
 var matrizSubtotales = obtenerMatrizSubtotalesJSON();
-
+const rezagadosVivosParaCorreo = histRezagadosPRD.filter(item => !item.esAnulado);
 // Cambiamos 'tablaHtml' por 'datosRaw' enviando el array original de la memoria
     const payload = {
         accion: "CORREO",
         puesto: urlPuesto,
         fecha: JtimestampStr,
-        datosRaw: histRezagadosPRD, 
+        datosRaw: rezagadosVivosParaCorreo, 
         datosPausas : histPausasPRD,
         resumen: matrizSubtotales  // <--- ¡AQUÍ ENTRA LA MAGIA AUTOMÁTICA!        
         };
@@ -703,7 +703,7 @@ function procesarLectura(evento) {
     const regLeido = histLecturasPRD.find(item =>
         item.qr === cadenaQR  &&  !item.esAnulado
         );
-    const indexRezagado = histRezagadosPRD.findIndex(item =>  // se rescata el index para hacerle un splice por haber sido usado
+    const indexRezagado = histRezagadosPRD.findIndex(item =>  // se rescata el index para hacerle un splice, ya no ahora sera esAnulado True por haber sido usado
         item.qr === cadenaQR && !item.esAnulado
         );    
                 // hasta aqui registro leido puede estar tambien en rezagado porque no es un OK.
@@ -734,7 +734,10 @@ function procesarLectura(evento) {
             } else {
                 IDORIGEN = regRezagado.destino; IDESTADOORIGEN = regRezagado.estadoFinal;
                 IDCANTREV = regRezagado.cantRev + 1;
-                histRezagadosPRD.splice(indexRezagado, 1);
+                // CAMBIO CRÍTICO: En vez de splice, lo marcamos como anulado (resuelto) para el panel
+                regRezagado.esAnulado = true; 
+                console.log(`📌 Rezagado marcado como resuelto (esAnulado = true) para el QR: ${cadenaQR}`);                
+                //    histRezagadosPRD.splice(indexRezagado, 1);
             }
     }
         
@@ -1088,7 +1091,33 @@ function conmutarModoVista() {
 function solicitarAnulacion(idRegistro) {
     // 1. Buscamos el objeto en el historial usando su ID único
     const registro = histLecturasPRD.find(item => item.id === idRegistro);
-    
+    if ( !registro )  {return};  
+        // =========================================================================
+        // RESTRUCTURACIÓN CRÍTICA: GESTIÓN DE ANULACIÓN CON ENFOQUE EN REVISIONES
+        // =========================================================================
+
+        if (registro.cantRev > 1) {
+            // Buscamos al padre exacto en la historia de la pieza: mismo QR, que esté oculto y con una revisión menos
+            const registroPadre = histRezagadosPRD.find(itemRez => 
+                itemRez.qr === registro.qr && 
+                itemRez.esAnulado === true && 
+                itemRez.cantRev === (registro.cantRev - 1)
+            );
+
+            if (registroPadre) {
+                // LE DEVOLVEMOS LA VIDA: El switch mágico lo vuelve a mostrar en la interfaz del Motorola
+                registroPadre.esAnulado = false; 
+                registroPadre.sincronizado = false; // Forzamos que se vuelva a actualizar en la nube
+                console.log(`♻️ Árbol genealógico restaurado: Padre revivido en Rezagados para el QR: ${registro.qr}`);
+            } else {
+                // Alerta de seguridad por si la cadena física de datos se rompió por manipulación externa
+                alert("¡ALERTA DE CONSISTENCIA!\n\nNo se encontró el registro padre en la memoria local. Contacte al supervisor de sistemas.");
+                console.warn(`❌ No se encontró un padre activo para el QR: ${registro.qr} con Cant.Rev: ${registro.cantRev - 1}`);
+                return
+            }
+
+        }        
+
     if (registro && !registro.esAnulado) {
         // 2. Modificaciones al PUNTERO del objeto
         registro.esAnulado = true;
@@ -1097,7 +1126,7 @@ function solicitarAnulacion(idRegistro) {
         // Forzamos sincronizado en false para que el filtro de la cola lo detecte.
         // Agregamos 'tipoAccion' para que Google Sheets sepa qué hacer al recibirlo.
         registro.sincronizado = false; 
-        registro.tipoAccion = "ANULAR"; 
+
         if ( registro.estadoFinal !== "OK" ) {
             const indexRez = histRezagadosPRD.findIndex(itemRez =>  // se rescata el index para hacerle un splice por haber sido usado
             itemRez.id === idRegistro );
@@ -1113,6 +1142,9 @@ function solicitarAnulacion(idRegistro) {
         // 4. Centralizamos el envío a través del motor asíncrono en vez de disparar el fetch directo
         reprocesarColaPendiente();
     }
+    
+        
+        // =========================================================================
     
     // Mantiene tu comportamiento original de usabilidad con el teclado
     document.getElementById('btn-ok-base').focus();
