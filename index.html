@@ -528,7 +528,7 @@ async function exportar() {
 
     // --- NUEVO  CONTENIDO AL CORREO VÍA WEB APP ---
 var matrizSubtotales = obtenerMatrizSubtotalesJSON();
-const rezagadosVivosParaCorreo = histRezagadosPRD.filter(item => !item.esAnulado);
+var rezagadosVivosParaCorreo = histRezagadosPRD.filter(item => !item.esAnulado);
 // Cambiamos 'tablaHtml' por 'datosRaw' enviando el array original de la memoria
     const payload = {
         accion: "CORREO",
@@ -541,7 +541,7 @@ const rezagadosVivosParaCorreo = histRezagadosPRD.filter(item => !item.esAnulado
     try {
         fetch(URL_GOOGLE_APP, {
             method: "POST",
-            mode: "cors",
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(payload)
         });
@@ -568,7 +568,7 @@ function obtenerMatrizSubtotalesJSON() {
             };
         }
 
-        if (!reg.esAnulado) {
+        if (reg.esContable) {
             // CONDICIÓN DIVIDIDA: Evaluamos si es OK y miramos su historial de revisiones
             if (reg.estadoFinal === "OK") {
                 if ((reg.cantRev || 1) === 1) {
@@ -764,6 +764,7 @@ function procesarLectura(evento) {
         adicrpto: "-", // col O  columna reservada para cuando se ocupe en zona de reparacion Z-R  ( parametro de URL ?)
         sincronizado: false,  //col P
         esAnulado: false,  // col Q
+        esContable: true, // usado para contar totales de registros diarios para correo
         cantRev: IDCANTREV,
         urlImagen: "", // Se procesará en la Web App de Google
         // --- NUEVO: Absorbe de forma limpia la foto que ya existe en la variable global ---
@@ -1107,7 +1108,7 @@ function solicitarAnulacion(idRegistro) {
             if (registroPadre) {
                 // LE DEVOLVEMOS LA VIDA: El switch mágico lo vuelve a mostrar en la interfaz del Motorola
                 registroPadre.esAnulado = false; 
-                registroPadre.sincronizado = false; // Forzamos que se vuelva a actualizar en la nube
+                registroPadre.sincronizado = false; // Forzamos que se vuelva a actualizar en la nube  SEGUN YO HISTREZAGADOS NO VA A SINCRONIZADO
                 console.log(`♻️ Árbol genealógico restaurado: Padre revivido en Rezagados para el QR: ${registro.qr}`);
             } else {
                 // Alerta de seguridad por si la cadena física de datos se rompió por manipulación externa
@@ -1121,7 +1122,7 @@ function solicitarAnulacion(idRegistro) {
     if (registro && !registro.esAnulado) {
         // 2. Modificaciones al PUNTERO del objeto
         registro.esAnulado = true;
-        
+        registro.esContable = false;
         // 🚨 CRUCIAL PARA MODO OFFLINE: 
         // Forzamos sincronizado en false para que el filtro de la cola lo detecte.
         // Agregamos 'tipoAccion' para que Google Sheets sepa qué hacer al recibirlo.
@@ -1130,7 +1131,7 @@ function solicitarAnulacion(idRegistro) {
         if ( registro.estadoFinal !== "OK" ) {
             const indexRez = histRezagadosPRD.findIndex(itemRez =>  // se rescata el index para hacerle un splice por haber sido usado
             itemRez.id === idRegistro );
-            console.log( `Puntero indexRez  ${indexRez} splice en Rezago.` );        
+            console.log( `Puntero indexRez  ${indexRez} splice en Rezago ( se está anulando un rezagado no necesito guardarlo anulado).` );        
             if ( indexRez !== -1 ) { histRezagadosPRD.splice(indexRez, 1)};
         }
         // 3. Persistencia local inmediata e impacto en la interfaz
@@ -1142,10 +1143,7 @@ function solicitarAnulacion(idRegistro) {
         // 4. Centralizamos el envío a través del motor asíncrono en vez de disparar el fetch directo
         reprocesarColaPendiente();
     }
-    
-        
         // =========================================================================
-    
     // Mantiene tu comportamiento original de usabilidad con el teclado
     document.getElementById('btn-ok-base').focus();
 }
@@ -1231,7 +1229,7 @@ function actualizarTablaVista() {
                     segundosAcumulados: 0
                 };
             }
-            if (!reg.esAnulado) {
+            if (reg.esContable) {
                 if (reg.estadoFinal === "OK") agrupadoSKU[skuClave].validos++;
                 else agrupadoSKU[skuClave].incidencias++;
 
