@@ -313,7 +313,7 @@
     <!-- ABAJO: Botonera de Control de Evidencia -->
     <div style="width: 100%; max-width: 400px; margin-top: 40px; padding: 0 20px; box-sizing: border-box;">
         <!-- BOTÓN PRINCIPAL VERDE -->
-        <button onclick="confirmarYCapturarFotoLocal()" style="width: 100%; padding: 18px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 1.5rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(40,167,69,0.3);">
+        <button id="btn-tomar-foto" onclick="confirmarYCapturarFotoLocal()" style="width: 100%; padding: 18px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 1.5rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(40,167,69,0.3);">
             📸 Tomar Foto y Continuar
         </button>
         
@@ -870,6 +870,29 @@ function apagarCamaraHardwareEvidencia() {
     estadoSecuenciaActual = "BOTONERA";
 }
 
+window.addEventListener('keydown', function(event) {
+    const modalVisible = document.getElementById('modal-evidencia-gigante') || document.getElementById('modal-evidence-gigante'); 
+    
+    if (modalVisible && (modalVisible.style.display === 'flex' || modalVisible.style.display === 'block')) {
+        
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            // 1. Evita comportamientos por defecto del navegador con la tecla Enter
+            event.preventDefault(); 
+            
+            console.log("Teclado físico detectado: Forzando click virtual...");
+            
+            const botonVerde = document.getElementById('btn-tomar-foto');
+            if (botonVerde) {
+                // 2. Ejecuta el click simulando interactividad real para desbloquear el foco del navegador
+                botonVerde.click(); 
+            } else {
+                // Respaldo por si no encuentra el botón por ID
+                confirmarYCapturarFotoLocal();
+            }
+        }
+    }
+});
+    
 async function simularToggleCamara() {
     // Al abrir guardamos en la memoria el botón que estaba activo
     botonPrevio = botonActivo;
