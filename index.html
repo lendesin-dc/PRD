@@ -875,7 +875,9 @@ window.addEventListener('keydown', function(event) {
     
     if (modalVisible && (modalVisible.style.display === 'flex' || modalVisible.style.display === 'block')) {
         
-        if (event.key === 'Enter' || event.keyCode === 13) {
+        if (event.key === 'Enter' || event.keyCode === 13 || 
+            event.key === 'VolumeUp' || event.keyCode === 24 || 
+            event.key === 'VolumeDown' || event.keyCode === 25 ) {
             // 1. Evita comportamientos por defecto del navegador con la tecla Enter
             event.preventDefault(); 
             
