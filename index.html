@@ -463,7 +463,7 @@ let ultimoHitoTime = Date.now(); // Estampa del milisegundo exacto del hito ante
 // 2.1 Boton del medio
 async function exportar() {
     // 1. Traer la base de datos local completa desde el localStorage
-    const datosRaw = localStorage.getItem('historial_rezagados_prd');
+    const datosRaw = localStorage.getItem('historial_bodega_prd');
 
     if (!datosRaw || datosRaw === "[]") {
         alert("No hay registros en el historial local para exportar.");
@@ -516,8 +516,9 @@ async function exportar() {
     // Reemplazamos los ":" por "-" para que el nombre de archivo sea válido
     const JhoraFormateada = Jahora.toLocaleTimeString('es-ES', { hour12: false }).replace(/:/g, '-');
 
-    const JtimestampStr = `${Janio}-${Jmes}-${Jdia}-${JhoraFormateada}`;
-
+    const JtimestampStr = `${Janio}-${Jmes}-${Jdia}-----${JhoraFormateada}`;
+    const Jfecha = `${Janio}-${Jmes}-${Jdia}`;
+    const Jhora = Jahora.toLocaleTimeString('es-ES', { hour12: false });
     link.download = `Respaldo_${urlPuesto}_${JtimestampStr}.xls`;
 
     document.body.appendChild(link);
@@ -532,7 +533,8 @@ var matrizSubtotales = obtenerMatrizSubtotalesJSON();
     const payload = {
         accion: "CORREO",
         puesto: urlPuesto,
-        fecha: JtimestampStr,
+        fecha: Jfecha,
+        hora: Jhora, 
         datosRaw: histRezagadosPRD, 
         datosPausas : histPausasPRD,
         resumen: matrizSubtotales  // <--- ¡AQUÍ ENTRA LA MAGIA AUTOMÁTICA!        
@@ -569,7 +571,7 @@ function obtenerMatrizSubtotalesJSON() {
 
         if (!reg.esAnulado) {
             // CONDICIÓN DIVIDIDA: Evaluamos si es OK y miramos su historial de revisiones
-            if (reg.estadoFinal === "OK") {
+            if (reg.estadoDestino === "OK") {
                 if ((reg.cantRev || 1) === 1) {
                     agrupadoSKU[skuClave].validosDirectos++;     // Suma a la primera revisión
                 } else {
@@ -712,13 +714,13 @@ function procesarLectura(evento) {
     if (regLeido) {
         const deltaMinutos = (momentoLect - regLeido.id) / (1000 * 60);
                     //  si registro leido es OK no puede tener otro OK, si registro leido no es ok, no puede ser el mismo no ok 
-             if ( (deltaMinutos < 660 && regLeido.estadoFinal === "OK") || regLeido.estadoFinal === estadoDestinoLect ) {
+             if ( (deltaMinutos < 660 && regLeido.estadoDestino === "OK") || regLeido.estadoDestino === estadoDestinoLect ) {
                 alert(`¡PRODUCTO DUPLICADO!\n\nLa serie [${serieLect}] ya fue registrada hace ${deltaMinutos.toFixed(1)} minutos.`);
                 input.value = "";
                 procesarLectura({ key: 'Enter' });
                 return
                 } else {
-                    IDORIGEN = regLeido.destino; IDESTADOORIGEN = regLeido.estadoFinal;
+                    IDORIGEN = regLeido.destino; IDESTADOORIGEN = regLeido.estadoDestino;
                     IDCANTREV = regLeido.cantRev + 1;
                     console.log(`FALLA suma ${IDCANTREV} revisiones.` );
                  }
@@ -726,13 +728,13 @@ function procesarLectura(evento) {
 
     if ( indexRezagado !== -1 ) {
             const regRezagado = histRezagadosPRD[indexRezagado];
-            if ( regRezagado.estadoFinal === estadoDestinoLect ) {
+            if ( regRezagado.estadoDestino === estadoDestinoLect ) {
             alert(`¡PRODUCTO REPITE FALLA!\n\nLa falla [${estadoDestinoLect}] ya fue registrada.`);
             input.value = "";
             procesarLectura({ key: 'Enter' });
             return
             } else {
-                IDORIGEN = regRezagado.destino; IDESTADOORIGEN = regRezagado.estadoFinal;
+                IDORIGEN = regRezagado.destino; IDESTADOORIGEN = regRezagado.estadoDestino;
                 IDCANTREV = regRezagado.cantRev + 1;
                 // CAMBIO CRÍTICO: En vez de splice, lo marcamos como anulado (resuelto) para el panel
                 regRezagado.esSucedido = true; 
@@ -757,7 +759,7 @@ function procesarLectura(evento) {
         sku: skuLect, // col H
         serie: serieLect, // col I
         lote: loteLect, //  col J  Orden de Compra
-        estadoFinal: estadoDestinoLect,   // col K puede ser una letra tipo( E R B ) o un texto alusivo a la revisión ok o fuga, elec, comp, emb, DD
+        estadoDestino: estadoDestinoLect,   // col K puede ser una letra tipo( E R B ) o un texto alusivo a la revisión ok o fuga, elec, comp, emb, DD
         destino: destinoDef, //col L  una bodega como en la S, B-01 si revisión ok, Z-R si se encuentra defecto
         tiempoSegundos: TiempoTak,  // col M tiempos entre revision
         adicfalla: "-", // col N  columna reservada se usará para contar numero de reparaciones parametro del rezagado o lecturas previas)
@@ -1072,7 +1074,7 @@ function alternarPausaLinea() {
             sku: "PAUSA", // Queda agrupado de forma idéntica
             serie: "DETENCION",
             lote: "",
-            estadoFinal: "PAUSA",
+            estadoDestino: "PAUSA",
             destino: "",
             tiempoSegundos: segundosPausaMuerta,
             adicfalla: "-",
@@ -1127,7 +1129,7 @@ function solicitarAnulacion(idRegistro) {
             // Buscamos al padre exacto en la historia de la pieza: mismo QR, que esté oculto y con una revisión menos
             const registroPadre = histRezagadosPRD.find(itemRez => 
                 itemRez.qr === registro.qr && 
-                itemRez.estadoFinal === registro.estadoOrigen && 
+                itemRez.estadoDestino === registro.estadoOrigen && 
                 itemRez.cantRev === (registro.cantRev - 1)
             );
 
@@ -1152,7 +1154,7 @@ function solicitarAnulacion(idRegistro) {
         // Forzamos sincronizado en false para que el filtro de la cola lo detecte.
         registro.sincronizado = false; 
 
-        if ( registro.estadoFinal !== "OK" ) {
+        if ( registro.estadoDestino !== "OK" ) {
             const indexRez = histRezagadosPRD.findIndex(itemRez =>  // se rescata el index para hacerle un splice no se necesita anulado
             itemRez.id === idRegistro );
             console.log( `Puntero indexRez  ${indexRez} splice en Rezago ( se está anulando un rezagado ).` );        
@@ -1195,8 +1197,8 @@ function actualizarTablaVista() {
             const fila = document.createElement('tr');
 
             // Colores suaves de fondo según el tipo de registro
-            if (reg.estadoFinal === "PAUSA") fila.className = "row-pausa-sistema";
-            else if (reg.estadoFinal !== "OK") fila.className = "row-reparar";
+            if (reg.estadoDestino === "PAUSA") fila.className = "row-pausa-sistema";
+            else if (reg.estadoDestino !== "OK") fila.className = "row-reparar";
 
             if (reg.esAnulado) fila.classList.add('registro-anulado');
 
@@ -1209,11 +1211,11 @@ function actualizarTablaVista() {
             let celdaEstadoNube = "";
             if (!reg.sincronizado) {
                 // Si está en cola: Texto del estado + Reloj parpadeando
-                celdaEstadoNube = `<span class="sincro-espera" style="font-size: 1.1rem; font-weight: bold; color: #ca8a04;">${reg.estadoFinal} ⏳</span>`;
+                celdaEstadoNube = `<span class="sincro-espera" style="font-size: 1.1rem; font-weight: bold; color: #ca8a04;">${reg.estadoDestino} ⏳</span>`;
             } else {
                 // Si ya está en la nube: Texto del estado + Su emoji correspondiente fijado
-                const emojiDefinitivo = MAPA_ICONOS[reg.estadoFinal] || "✔️";
-                celdaEstadoNube = `<span style="font-size: 1.1rem; font-weight: bold; color: #1e293b;">${reg.estadoFinal} ${emojiDefinitivo}</span>`;
+                const emojiDefinitivo = MAPA_ICONOS[reg.estadoDestino] || "✔️";
+                celdaEstadoNube = `<span style="font-size: 1.1rem; font-weight: bold; color: #1e293b;">${reg.estadoDestino} ${emojiDefinitivo}</span>`;
             }
 
                 let celdaAccionHtml = "";
@@ -1222,7 +1224,7 @@ function actualizarTablaVista() {
                     celdaAccionHtml = `<span style="color: #ca8a04; font-weight: bold;">ANULADO</span>`;
                 } else if (reg.esSucedido) {
                     // REGLA 2: Si tiene sucesor, el botón desaparece y muestra un badge gris elegante
-                    celdaAccionHtml = `<span style="color: #64748b; font-style: italic;">Sucedido</span>`;
+                    celdaAccionHtml = `<span style="color: #64748b; font-style: italic;">Rev.${reg.cantRev}</span>`;
                 } else {
                     // Si está vivo y no tiene sucesor, es el último eslabón y tiene el botón activo
                     celdaAccionHtml = `<button class="btn-anular" style="${botonEstilo}" onclick="solicitarAnulacion(${reg.id})">${botonTexto}</button>`;
@@ -1262,7 +1264,7 @@ function actualizarTablaVista() {
                 };
             }
             if (!reg.esAnulado) {
-                if (reg.estadoFinal === "OK") agrupadoSKU[skuClave].validos++;
+                if (reg.estadoDestino === "OK") agrupadoSKU[skuClave].validos++;
                 else agrupadoSKU[skuClave].incidencias++;
 
                 // Filtro de descarte para tiempos mayores a 20 minutos (1200 segundos)
@@ -1315,6 +1317,7 @@ async function enviarAGoogleSheets(objetoRegistro) {
 
         // 3. Como es 'no-cors', asumimos éxito si no entró al catch
         objetoRegistro.sincronizado = true;
+        objetoRegistro.evidenciaBase64 = "";
         guardarEnMemoriaLocal();
         actualizarTablaVista(); // Cambia el reloj ⏳ por el emoji definitivo 🟢
         console.log("Sincronización exitosa para ID:", objetoRegistro.id);
