@@ -363,6 +363,7 @@ let fotoEvidenciaBase64 = "";
 
 // 1. CONFIGURACIÓN DEL ENTORNO REMOTO DE GOOGLE SHEETS
 const URL_GOOGLE_APP = "https://script.google.com/macros/s/AKfycbwgXz11ga0JPKWNq98gkaXn0t-N_yO4ZcMgD15Y3V3pIfnau42443kooNknmoFRFZBf/exec";
+const URL_GOOGLE_CORREO = "https://script.google.com/macros/s/AKfycbwFXgvLhGo4joBmyhnkXz82nM0QIiurl_DTX6jUOZ5d4fQS64bbNH0WoHUl1Vqp77g/exec";    
 
 const URL_GANTT = "https://script.google.com/macros/s/AKfycbxoDJlOxRApjJQHiODdqQR-7hNx6zBAe2p6hG23pgTMB_eKI29Azy7caV9Vk6Cc7fU/exec?puesto=";
 
@@ -539,6 +540,8 @@ var matrizSubtotales = obtenerMatrizSubtotalesJSON();
         datosPausas : histPausasPRD,
         resumen: matrizSubtotales  // <--- ¡AQUÍ ENTRA LA MAGIA AUTOMÁTICA!        
         };
+
+    if ( urlPuesto !== "LINEA-X" ) {
     try {
         fetch(URL_GOOGLE_APP, {
             method: "POST",
@@ -552,6 +555,21 @@ var matrizSubtotales = obtenerMatrizSubtotalesJSON();
     } catch (error) {
         alert("Archivo guardado localmente.");
         }
+    } else {
+    try {
+        fetch(URL_GOOGLE_CORREO, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
+        });
+
+        alert("¡Archivo guardado localmente y enviados");
+
+     } catch (error) {
+        alert("Archivo guardado localmente.");
+         }
+     }
 }
 
 function obtenerMatrizSubtotalesJSON() {
