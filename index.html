@@ -788,7 +788,8 @@ function procesarLectura(evento) {
         urlImagen: "", // Se procesará en la Web App de Google
         // --- NUEVO: Absorbe de forma limpia la foto que ya existe en la variable global ---
         evidenciaBase64: (botonActivo !== "OK") ? fotoEvidenciaBase64 : "",
-        esSucedido: false
+        esSucedido: false,
+        tRepStd: ""
         };
     // Limpiamos el contenedor global de la foto para que la siguiente operación inicie limpia
     fotoEvidenciaBase64 = "";
@@ -1102,7 +1103,8 @@ function alternarPausaLinea() {
             cantRev: 0,
             urlImagen: "", 
             evidenciaBase64: "",
-            esSucedido: false
+            esSucedido: false,
+            tRepStd: ""
 
         };
 
