@@ -880,7 +880,7 @@ function apagarCamaraHardwareEvidencia() {
     document.getElementById('modal-evidencia-gigante').style.display = "none";
     camaraActivaHardware = false;
     fotoEvidenciaBase64 = ""; // Vaciamos por seguridad si canceló
-    
+    sonarBip750Hz("1280","0.5");
     // Liberamos el flujo para que no quede la aplicación congelada en segundo plano
     if (resolverEsperaEvidencia) {
         resolverEsperaEvidencia();
