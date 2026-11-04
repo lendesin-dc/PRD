@@ -860,7 +860,7 @@ function confirmarYCapturarFotoLocal() {
     fotoEvidenciaBase64 = canvas.toDataURL('image/jpeg', 0.75); 
 
     console.log("📸 Evidencia resguardada en memoria. Pasando al escaneo QR...");
-
+    sonarBip750Hz("980","0.5");
     // 2. Apagamos el stream de la foto y cerramos su modal visual
     if (streamActivoBodega) {
         streamActivoBodega.getTracks().forEach(track => track.stop());
