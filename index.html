@@ -891,7 +891,7 @@ function apagarCamaraHardwareEvidencia() {
     document.getElementById('modal-evidencia-gigante').style.display = "none";
     camaraActivaHardware = false;
     fotoEvidenciaBase64 = ""; // Vaciamos por seguridad si canceló
-    sonarBip750Hz("1280","0.5");
+    sonarBip750Hz("1280","0.65");
     // Liberamos el flujo para que no quede la aplicación congelada en segundo plano
     if (resolverEsperaEvidencia) {
         resolverEsperaEvidencia();
@@ -948,7 +948,7 @@ async function simularToggleCamara() {
         videoElemento.srcObject = streamActivoBodega;
         // Iniciamos el bucle de análisis rápido acelerado cada 180 milisegundos
         analisisEnProgreso = false;
-        window.bucleEscaneo = setInterval(analizarCuadroCamara, 230);
+        window.bucleEscaneo = setInterval(analizarCuadroCamara, 280);
     } catch (err) {
         alert("Acceso al hardware bloqueado. Asegúrese de dar permisos de cámara en la barra de direcciones HTTPS.");
         apagarCamaraHardware();
@@ -1120,7 +1120,7 @@ function alternarPausaLinea() {
         };
 
         histLecturasPRD.unshift(registroPausa);
-        histPausasPRD.unshift(registroPausa);
+        histPausasPRD.push(registroPausa);
         enviarAGoogleSheets(registroPausa);
         guardarEnMemoriaLocal();
         actualizarTablaVista();
