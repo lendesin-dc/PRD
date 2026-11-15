@@ -800,7 +800,8 @@ function procesarLectura(evento) {
         // --- NUEVO: Absorbe de forma limpia la foto que ya existe en la variable global ---
         evidenciaBase64: (botonActivo !== "OK") ? fotoEvidenciaBase64 : "",
         esSucedido: false,
-        tRepStd: ""
+        tRepStd: "",
+        sincOlap: "nuevo"
         };
     // Limpiamos el contenedor global de la foto para que la siguiente operación inicie limpia
     fotoEvidenciaBase64 = "";
@@ -831,7 +832,7 @@ let streamActivoBodega = null;
 // Variable global para pausar/reanudar el flujo asíncrono secuencial
 let resolverEsperaEvidencia = null;
 
-function simularToggleCamaraEvidencia() {
+async function simularToggleCamaraEvidencia() {
     return new Promise(async (resolve) => {
         // Guardamos la referencia para poder desbloquear el await más adelante
         resolverEsperaEvidencia = resolve;
@@ -856,7 +857,7 @@ function simularToggleCamaraEvidencia() {
     });
 }
 
-function confirmarYCapturarFotoLocal() {
+async function confirmarYCapturarFotoLocal() {
     const video = document.getElementById('video-evidencia-stream');
     if (!video) return;
 
@@ -871,7 +872,7 @@ function confirmarYCapturarFotoLocal() {
     fotoEvidenciaBase64 = canvas.toDataURL('image/jpeg', 0.75); 
 
     console.log("📸 Evidencia resguardada en memoria. Pasando al escaneo QR...");
-    sonarBip750Hz("980","2");
+    await sonarBip750Hz("980","1");
     // 2. Apagamos el stream de la foto y cerramos su modal visual
     if (streamActivoBodega) {
         streamActivoBodega.getTracks().forEach(track => track.stop());
@@ -1115,7 +1116,8 @@ function alternarPausaLinea() {
             urlImagen: "", 
             evidenciaBase64: "",
             esSucedido: false,
-            tRepStd: ""
+            tRepStd: "",
+            sincOlap: "nuevo"
 
         };
 
@@ -1166,7 +1168,8 @@ function solicitarAnulacion(idRegistro) {
 
             if (registroPadre) {
                 // LE DEVOLVEMOS El boton anulado en la interfaz del Motorola
-                registroPadre.esSucedido = false; 
+                registroPadre.esSucedido = false;
+                registroPadre.sincOlap = "modif";
            //   registroPadre.sincronizado = false; // No se vuelve a actualizar en la nube ya está, el registro anulado SI
                 console.log(`♻️ Árbol genealógico restaurado: Padre revivido en Rezagados para el QR: ${registro.qr}`);
             } else {
@@ -1184,7 +1187,7 @@ function solicitarAnulacion(idRegistro) {
         // 🚨 CRUCIAL PARA MODO OFFLINE: 
         // Forzamos sincronizado en false para que el filtro de la cola lo detecte.
         registro.sincronizado = false; 
-
+        registro.sincOlap = "modif";
         if ( registro.estadoDestino !== "OK" ) {
             const indexRez = histRezagadosPRD.findIndex(itemRez =>  // se rescata el index para hacerle un splice no se necesita anulado
             itemRez.id === idRegistro );
