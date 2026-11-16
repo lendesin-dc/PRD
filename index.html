@@ -664,22 +664,28 @@ function fijarbotonEstadonuevo(codigo, boton) {
  console.log("Estado seleccionado listo para captura:", botonActivo);
 }
 
-// 4. PROCESADOR DE ENTRADA CENTRAL DE DATOS (BACKOFFICE DE LECTURA)
+// --- ENTRADA 1: PISTOLA / TECLADO (Mantiene el nombre original de tu HTML) ---
 function procesarLectura(evento) {
     if (evento.key !== 'Enter') return;
-    const input = document.getElementById('txt-lector');
-    const cadenaQR = input.value.trim();
-    // EXCEPCIÓN DETECTADA: Si el resultado es NO OK (cámara cerrada o enter vacío)
-    if (cadenaQR === "") {
-        console.log("Excepción: Captura vacía. Retornando a botón anterior:", botonPrevio);
-        restaurarBotoneraInferior();
+    procesarCodigoBodega(document.getElementById('txt-lector').value);
+}
 
-        // Retornamos la interfaz exactamente al botón que tenía antes de abrir la cámara
+// --- NÚCLEO UNIFICADO (Recibe pistola o cámara por igual) ---
+function procesarCodigoBodega(valorCrudo) {
+    const input = document.getElementById('txt-lector');
+    const cadenaQR = valorCrudo.trim();
+    input.value = cadenaQR;
+
+    // 4. PROCESADOR DE ENTRADA CENTRAL DE DATOS (BACKOFFICE DE LECTURA)
+    // Cierre manual de cámara o Enter vacío -> Restaura botonera
+    if (cadenaQR === '') {
+        restaurarBotoneraInferior();
         const botonAActivar = Array.from(document.querySelectorAll('.btn-opcion'))
-                                   .find(b => b.innerText.includes(botonPrevio));
-        if (botonAActivar) fijarbotonEstado(botonPrevio, botonAActivar);
+            .find(b => b.innerText.includes(botonPrevio));
+        if (botonAActivar) fijarBotonEstado(botonPrevio, botonAActivar);
         return;
     }
+
     // VERIFICACIÓN Y TRADUCCIÓN DE FORMATO DE BODEGA
     if (!cadenaQR.includes('#')) {
         alert("¡CÓDIGO NO VÁLIDO!\n\nAl formato le falta el separador (#). Pruebe de nuevo.");
@@ -928,7 +934,7 @@ window.addEventListener('keydown', function(event) {
     }
 });
     
-async function simularToggleCamara() {
+async function oldsimularToggleCamara() {
     // Al abrir guardamos en la memoria el botón que estaba activo
     botonPrevio = botonActivo;
     if (botonActivo !== "OK") {
@@ -958,7 +964,7 @@ async function simularToggleCamara() {
 }
 
 // Bucle analizador compatible cross-platform
-async function analizarCuadroCamara() {
+async function oldanalizarCuadroCamara() {
     const video = document.getElementById('video-bodega-stream');
     if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
     if (analisisEnProgreso) return;
@@ -983,7 +989,7 @@ async function analizarCuadroCamara() {
     }
 }
 
-function apagarCamaraHardware() {
+function oldapagarCamaraHardware() {
 
     if (streamActivoBodega) {
         streamActivoBodega.getTracks().forEach(track => track.stop());
@@ -995,6 +1001,25 @@ function apagarCamaraHardware() {
         procesarLectura({ key: 'Enter' });
     }
     estadoSecuenciaActual = "BOTONERA";
+}
+// --- CONTROL DE FLUJO DE CÁMARA ---
+async function simularToggleCamara() {
+    botonPrevio = botonActivo;
+    if (botonActivo !== 'OK') await simularToggleCamaraEvidencia();
+
+    camaraActivaHardware = true;
+    estadoSecuenciaActual = 'CAMARA_NEGRA';
+    await EscanerBodega.iniciar(botonActivo, MAPA_ICONOS[botonActivo]);
+}
+
+function apagarCamaraHardware() {
+    EscanerBodega.detener(true);
+}
+
+function onCamaraCerrada(cancelado) {
+    camaraActivaHardware = false;
+    estadoSecuenciaActual = 'BOTONERA';
+    if (cancelado) procesarCodigoBodega('');
 }
 
 // 6. CONTROL DE MUTACIONES ERGONÓMICAS DE LA FRANJA DE HARDWARE (CON CURSOR GRUESO A LA IZQUIERDA)
