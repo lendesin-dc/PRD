@@ -1003,6 +1003,62 @@ function oldapagarCamaraHardware() {
     estadoSecuenciaActual = "BOTONERA";
 }
 // --- CONTROL DE FLUJO DE CÁMARA ---
+const EscanerBodega = (() => {
+    const detector = new BarcodeDetector({ formats: ['qr_code'] });
+    const modal = document.getElementById('modal-escaneo-gigante');
+    const cartel = document.getElementById('escaneo-cartel-superior');
+    const video = document.getElementById('video-bodega-stream');
+
+    let stream = null;
+    let timerId = null;
+    let activo = false;
+
+    async function cicloDeteccion() {
+        if (!activo) return;
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            const codigos = await detector.detect(video);
+            if (codigos.length > 0) {
+                detener(false);
+                procesarCodigoBodega(codigos.rawValue);
+                return;
+            }
+        }
+        timerId = setTimeout(cicloDeteccion, 230);
+    }
+
+    async function iniciar(etiqueta, iconoHtml) {
+        if (activo) return;
+        activo = true;
+
+        cartel.innerHTML = `<span>${etiqueta}</span> <span>${iconoHtml}</span>`;
+        modal.style.display = 'flex';
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false
+        });
+
+        video.srcObject = stream;
+        cicloDeteccion();
+    }
+
+    function detener(cancelado = true) {
+        activo = false;
+        clearTimeout(timerId);
+        if (stream) {
+            stream.getTracks().forEach(t => t.stop());
+            stream = null;
+        }
+        video.srcObject = null;
+        modal.style.display = 'none';
+        onCamaraCerrada(cancelado);
+    }
+
+    return { iniciar, detener };
+})();
+
+    
 async function simularToggleCamara() {
     botonPrevio = botonActivo;
     if (botonActivo !== 'OK') await simularToggleCamaraEvidencia();
