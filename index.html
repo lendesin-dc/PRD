@@ -564,9 +564,7 @@ var matrizSubtotales = obtenerMatrizSubtotalesJSON();
         alert("Archivo guardado localmente.");
         }
     } 
-    
-    if ( urlPuesto === "LINEA-X" ) {   
-        
+
     try {
         fetch(URL_GOOGLE_CORREO, {
             method: "POST",
@@ -580,7 +578,7 @@ var matrizSubtotales = obtenerMatrizSubtotalesJSON();
      } catch (error) {
         alert("Archivo guardado localmente.");
          }
-     }
+     
 }
 
 function obtenerMatrizSubtotalesJSON() {
@@ -628,7 +626,7 @@ function obtenerMatrizSubtotalesJSON() {
       "validosDirectos": item.validosDirectos,
       "validosRecuperados": item.validosRecuperados,
       "fallados": item.incidencias,
-      "tiempo": minutosDecimales + " min",
+      "tiempo": minutosDecimales,
       "total": totalItems
     };
   });
@@ -934,74 +932,6 @@ window.addEventListener('keydown', function(event) {
     }
 });
     
-async function oldsimularToggleCamara() {
-    // Al abrir guardamos en la memoria el botón que estaba activo
-    botonPrevio = botonActivo;
-    if (botonActivo !== "OK") {
-        await simularToggleCamaraEvidencia();
-    }
-    // Levantamos visualmente la ventana del escáner inyectando el visor dinámico si no existe
-    document.getElementById('escaneo-cartel-superior').innerHTML = `<span>${botonActivo}</span> <span>${
-        MAPA_ICONOS[botonActivo]}</span>`;
-    document.getElementById('modal-escaneo-gigante').style.display = "flex";
-    camaraActivaHardware = true;
-    // Encendido del hardware físico (Lente Trasero "environment" a alta resolución)
-    try {
-        streamActivoBodega = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-            audio: false
-        });
-        const videoElemento = document.getElementById('video-bodega-stream');
-        videoElemento.srcObject = streamActivoBodega;
-        // Iniciamos el bucle de análisis rápido acelerado cada 180 milisegundos
-        analisisEnProgreso = false;
-        window.bucleEscaneo = setInterval(analizarCuadroCamara, 280);
-    } catch (err) {
-        alert("Acceso al hardware bloqueado. Asegúrese de dar permisos de cámara en la barra de direcciones HTTPS.");
-        apagarCamaraHardware();
-    }
-    estadoSecuenciaActual = "CAMARA_NEGRA";
-}
-
-// Bucle analizador compatible cross-platform
-async function oldanalizarCuadroCamara() {
-    const video = document.getElementById('video-bodega-stream');
-    if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
-    if (analisisEnProgreso) return;
-    // Si el dispositivo tiene soporte nativo (Android Chrome), procesa de forma acelerada por GPU
-    if ('BarcodeDetector' in window) {
-        try {
-            analisisEnProgreso = true;
-            const detector = new BarcodeDetector({ formats: ['qr_code'] });
-            const codigos = await detector.detect(video);
-            if (codigos.length > 0) {
-                clearInterval(bucleEscaneo);
-                document.getElementById('txt-lector').value = codigos[0].rawValue;
-                apagarCamaraHardware();
-                procesarLectura({ key: 'Enter' }); // Disparador automático
-            } else {
-                analisisEnProgreso = false;
-            }
-        } catch (e) { analisisEnProgreso = false; /* Silencio cuadro a cuadro */ }
-    } else {
-        // FALLBACK DISPOSITIVOS DE PLANTA (Si la pistola de lectura es el único canal o usas iOS)
-        // El visor se mantendrá abierto permitiendo enfocar el objetivo para el operario
-    }
-}
-
-function oldapagarCamaraHardware() {
-
-    if (streamActivoBodega) {
-        streamActivoBodega.getTracks().forEach(track => track.stop());
-    }
-    document.getElementById('modal-escaneo-gigante').style.display = "none";
-    camaraActivaHardware = false;
-    // Si se cerró sin lectura, procesa la excepción vacía para retornar los botones al estado inicial
-    if (document.getElementById('txt-lector').value.trim() === "") {
-        procesarLectura({ key: 'Enter' });
-    }
-    estadoSecuenciaActual = "BOTONERA";
-}
 // --- CONTROL DE FLUJO DE CÁMARA ---
 const EscanerBodega = (() => {
     const detector = new BarcodeDetector({ formats: ['qr_code'] });
@@ -1058,8 +988,7 @@ const EscanerBodega = (() => {
 
     return { iniciar, detener };
 })();
-
-    
+  
 async function simularToggleCamara() {
     botonPrevio = botonActivo;
     if (botonActivo !== 'OK') await simularToggleCamaraEvidencia();
@@ -1152,11 +1081,6 @@ function alternarPausaLinea() {
     const btn = document.getElementById('btn-pausa-dinamico');
     const capaPausa = document.getElementById('capa-pausa');
     const ahora = Date.now();
-    let HH = new Date();
-    HH.setHours(10,0,0,0);
-    HH10c00 = HH.getTime();
-    HH.setHours(10,10,0,0);
-    HH10c10 = HH.getTime();
 
     if (!lineaEnPausa) {
         // DETENCIÓN: Se calcula cuánto se trabajó en el SKU previo antes de congelar la línea
@@ -1204,7 +1128,7 @@ function alternarPausaLinea() {
         };
 
         histLecturasPRD.unshift(registroPausa);
-        histPausasPRD.push(registroPausa);
+        histPausasPRD.unshift(registroPausa);
         enviarAGoogleSheets(registroPausa);
         guardarEnMemoriaLocal();
         actualizarTablaVista();
