@@ -1128,7 +1128,7 @@ function alternarPausaLinea() {
         };
 
         histLecturasPRD.unshift(registroPausa);
-        histPausasPRD.unshift(registroPausa);
+        histPausasPRD.push(registroPausa);
         enviarAGoogleSheets(registroPausa);
         guardarEnMemoriaLocal();
         actualizarTablaVista();
