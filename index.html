@@ -1163,7 +1163,12 @@ function solicitarAnulacion(idRegistro) {
         // =========================================================================
         // RESTRUCTURACIÓN CRÍTICA: GESTIÓN DE ANULACIÓN CON ENFOQUE EN REVISIONES
         // =========================================================================
-
+        if ( registro.sku === "PAUSA" ) {
+            const indexPau = histPausasPRD.findIndex(itemPau =>  // se rescata el index para hacerle un splice no se necesita anulado
+            itemPau.id === idRegistro );
+            console.log( `Puntero indexPau  ${indexPau} splice en Pausas ( se está anulando un pausas ).` );        
+            if ( indexPau !== -1 ) { histPausasPRD.splice(indexPau, 1)};
+        };
         if (registro.cantRev > 1) {
             // Buscamos al padre exacto en la historia de la pieza: mismo QR, que esté oculto y con una revisión menos
             const registroPadre = histRezagadosPRD.find(itemRez => 
