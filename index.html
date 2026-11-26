@@ -1133,6 +1133,35 @@ function alternarPausaLinea() {
         guardarEnMemoriaLocal();
         actualizarTablaVista();
 
+    // --- GATILLO AVANCE MEDIODÍA (VUELTA DE COLACIÓN >= 29 MIN) ---
+    const ahoraColacion = new Date();
+    const minActuales = ahoraColacion.getHours() * 60 + ahoraColacion.getMinutes();
+    const enHorarioColacion = (minActuales >= (12 * 60 + 45)) && (minActuales <= (13 * 60 + 40)); // 12:45 a 14:30
+    const esPausaColacion = segundosPausaMuerta >= (10 * 60); // >= 29 minutos
+    const yaEnviadoMedioDia = localStorage.getItem('avanceMedioDiaEnviado') === 'true';
+
+    if (esPausaColacion && enHorarioColacion && !yaEnviadoMedioDia) {
+      localStorage.setItem('avanceMedioDiaEnviado', 'true'); // Activa bandera para no repetir
+
+      const payloadMedioDia = {
+        accion: "CORREO",
+        puesto: urlPuesto,
+        fecha: registroPausa.dia,
+        hora: registroPausa.hora,
+        datosRaw: [],  //histRezagadosPRD,
+        datosPausas: [], //histPausasPRD,
+        resumen: obtenerMatrizSubtotalesJSON()
+      };
+
+      fetch(URL_GOOGLE_APP, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payloadMedioDia)
+      }).catch(error => console.warn("Error envío automático mediodía:", error));
+    }
+
+        
         if (btn) {
             btn.innerText = "⏸️ Pausa";
             btn.style.backgroundColor = "#f97316";
@@ -1549,6 +1578,7 @@ function guardarEnMemoriaLocal() {
 
 function limpiarPantallaCompleta() {
     if(confirm("¿Desea limpiar la sesión actual del panel?\n(Los tiempos guardados en Google Sheets no se borrarán)")) {
+        localStorage.removeItem('avanceMedioDiaEnviado');
         histLecturasPRD = [];
         localStorage.removeItem('historial_bodega_prd');
         histRezagadosPRD = [];
